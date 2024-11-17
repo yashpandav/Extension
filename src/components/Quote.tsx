@@ -80,7 +80,9 @@ export const Quote = () => {
         onClick={handleRefresh}
         className="mt-4 p-2 rounded-full hover:bg-gray-200 cursor-pointer flex justify-center items-center"
       >
-        <RefreshIcon className="w-6 h-6 text-gray-600" />
+        <RefreshIcon
+          className={`w-6 h-6 text-gray-600 ${loading ? "animate-spin" : ""}`}
+        />
       </div>
     </div>
   );
