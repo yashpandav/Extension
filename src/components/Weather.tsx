@@ -43,7 +43,7 @@ export const Weather = () => {
 
   if (error) {
     return (
-      <div className="bg-red-100 text-red-700 p-4 rounded-md">
+      <div className="bg-red-100 text-red-700 p-4 rounded-md shadow-md">
         <p>Error: {error}</p>
       </div>
     );
@@ -51,25 +51,33 @@ export const Weather = () => {
 
   if (!weather) {
     return (
-      <div className="bg-white/30 backdrop-blur-md rounded-xl p-4 shadow-lg text-center">
+      <div className="bg-gray-50 rounded-xl p-4 shadow-md text-center">
         <p>Loading weather data...</p>
       </div>
     );
   }
 
+  const handleWeatherClick = () => {
+    const query = encodeURIComponent('current weather');
+    window.open(`https://www.google.com/search?q=${query}`);
+  };
+
   return (
-    <div className="bg-white/30 backdrop-blur-md rounded-xl p-4 shadow-lg">
-      <div className="flex items-center gap-3">
+    <div
+      className="bg-gray-50 rounded-xl p-6 shadow-lg cursor-pointer hover:shadow-xl transition-all"
+      onClick={handleWeatherClick}
+    >
+      <div className="flex items-center gap-4">
         {weather.condition.toLowerCase().includes('rain') ? (
-          <CloudRain className="w-8 h-8 text-blue-600" />
+          <CloudRain className="w-10 h-10 text-blue-500" />
         ) : weather.condition.toLowerCase().includes('cloud') ? (
-          <Cloud className="w-8 h-8 text-gray-600" />
+          <Cloud className="w-10 h-10 text-gray-500" />
         ) : (
-          <Sun className="w-8 h-8 text-yellow-500" />
+          <Sun className="w-10 h-10 text-yellow-400" />
         )}
         <div>
-          <h2 className="text-2xl font-bold">{weather.temp}°C</h2>
-          <p className="text-sm text-gray-700">{weather.location}</p>
+          <h2 className="text-3xl font-bold text-gray-800">{weather.temp}°C</h2>
+          <p className="text-lg text-gray-600">{weather.location}</p>
           <p className="text-sm text-gray-500 capitalize">{weather.condition}</p>
         </div>
       </div>
