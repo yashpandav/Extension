@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Cloud, Sun, CloudRain, AlertCircle  } from 'lucide-react';
+import { Cloud, Sun, CloudRain, AlertCircle, Clock } from 'lucide-react';
 
 export const Weather = () => {
   const [weather, setWeather] = useState<any>(null);
@@ -10,12 +10,19 @@ export const Weather = () => {
   const fetchWeather = (latitude: number, longitude: number) => {
     const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}&units=metric`;
 
-    fetch(url)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+      setError('Request timed out. Please try again.');
+    }, 10000);
+
+    fetch(url, { signal: controller.signal })
       .then((response) => {
         if (!response.ok) throw new Error('Failed to fetch weather data.');
         return response.json();
       })
       .then((data) => {
+        clearTimeout(timeoutId);
         const formattedWeather = {
           temp: Math.round(data.main.temp),
           condition: data.weather[0].description,
@@ -23,7 +30,19 @@ export const Weather = () => {
         };
         setWeather(formattedWeather);
       })
-      .catch((err) => setError(err.message));
+      .catch((err) => {
+        clearTimeout(timeoutId);
+        if (err.name === 'AbortError') {
+          setError('Request timed out after 10 seconds. Please try again.');
+        } else {
+          setError(err.message);
+        }
+      });
+
+    return () => {
+      controller.abort();
+      clearTimeout(timeoutId);
+    };
   };
 
   useEffect(() => {
@@ -40,19 +59,6 @@ export const Weather = () => {
       () => setError('Unable to retrieve your location.')
     );
   }, []);
-
-  // if (error) {
-  //   return (
-  //     <div className="relative backdrop-blur-lg bg-red-500/10 border border-red-100 text-red-700 p-6 rounded-3xl shadow-lg">
-  //       <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-transparent rounded-3xl"></div>
-  //       <p className="relative font-medium flex items-center gap-2">
-  //         <span className="inline-block w-2 h-2 bg-red-500 rounded-full"></span>
-  //         Error: {error}
-  //       </p>
-  //     </div>
-  //   );
-  // }
-
   
   if (error) {
     return (
@@ -65,18 +71,25 @@ export const Weather = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-red-50/50 to-transparent rounded-2xl"></div>
           
           <div className="relative space-y-2">
-            <div className="flex items-center gap-2 text-red-600">
-              <AlertCircle className="w-5 h-5" />
+            <div className="flex items-center gap-2 text-red-700">
+              {error.includes('timeout') ? (
+                <Clock className="w-5 h-5" />
+              ) : (
+                <AlertCircle className="w-5 h-5" />
+              )}
               <span className="font-semibold">Weather Data Unavailable</span>
             </div>
             
-            <p className="text-sm text-gray-700 pl-7">
+            <p className="text-sm text-gray-800 pl-7">
               {error}
             </p>
             
-            <p className="text-xs text-gray-500 pl-7">
-              Please check your connection and try again.
-            </p>
+            <button 
+              onClick={() => window.location.reload()}
+              className="ml-7 mt-2 text-xs text-blue-700 hover:text-blue-800 transition-colors"
+            >
+              Try again
+            </button>
           </div>
         </div>
       </div>
@@ -108,11 +121,11 @@ export const Weather = () => {
     const baseClasses = "w-12 h-12";
     
     if (condition.includes('rain')) {
-      return <CloudRain className={`${baseClasses} text-blue-500`} />;
+      return <CloudRain className={`${baseClasses} text-blue-600`} />;
     } else if (condition.includes('cloud')) {
-      return <Cloud className={`${baseClasses} text-gray-500`} />;
+      return <Cloud className={`${baseClasses} text-gray-600`} />;
     }
-    return <Sun className={`${baseClasses} text-yellow-400`} />;
+    return <Sun className={`${baseClasses} text-amber-400`} />;
   };
 
   return (
@@ -120,18 +133,14 @@ export const Weather = () => {
       className="group relative cursor-pointer"
       onClick={handleWeatherClick}
     >
-      {/* Decorative circles in background */}
       <div className="absolute -top-3 -right-3 w-16 h-16 bg-blue-400/30 rounded-full blur-lg"></div>
       <div className="absolute -bottom-3 -left-3 w-16 h-16 bg-purple-400/20 rounded-full blur-lg"></div>
       
-      {/* Main card */}
-      <div className="relative backdrop-blur-xl bg-white/20 rounded-2xl p-6 shadow-md 
+      <div className="relative backdrop-blur-xl bg-white/10 rounded-2xl p-6 shadow-md 
                     border border-white/30 overflow-hidden
-                    hover:shadow-lg hover:bg-white/30 transition-all duration-300">
-        {/* Inner gradient overlay */}
+                    hover:shadow-lg hover:bg-white/15 transition-all duration-300">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-100/20 to-transparent"></div>
         
-        {/* Content */}
         <div className="relative flex items-start gap-4">
           <div className="p-1">
             {getWeatherIcon()}
@@ -139,25 +148,24 @@ export const Weather = () => {
           
           <div className="space-y-2">
             <div className="flex items-baseline gap-1">
-              <h2 className="text-2xl font-bold text-gray-800">
+              <h2 className="text-3xl font-bold text-gray-900">
                 {weather.temp}°
               </h2>
-              <span className="text-sm text-gray-600">C</span>
+              <span className="text-xl font-semibold text-gray-800">C</span>
             </div>
             
             <div className="space-y-1">
-              <p className="text-sm font-medium text-gray-700">
+              <p className="text-base font-semibold text-gray-800">
                 {weather.location}
               </p>
-              <p className="text-xs text-gray-600 capitalize">
+              <p className="text-sm font-semibold text-slate-800 capitalize">
                 {weather.condition}
               </p>
             </div>
           </div>
         </div>
 
-        {/* Hover effect */}
-        <div className="absolute bottom-2 right-3 text-[10px] text-gray-500 opacity-0 
+        <div className="absolute bottom-2 right-3 text-[10px] text-slate-800 opacity-0 
                       group-hover:opacity-100 transition-opacity duration-300">
           View details →
         </div>
@@ -165,3 +173,5 @@ export const Weather = () => {
     </div>
   );
 };
+
+export default Weather;
