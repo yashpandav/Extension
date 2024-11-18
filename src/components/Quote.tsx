@@ -20,7 +20,7 @@ export const Quote = () => {
       const response = await fetch(apiUrl, {
         headers: { "X-Api-Key": QUOTES_API_KEY },
       });
-      
+
       const data = await response.json();
       if (response.ok && data.length > 0) {
         setQuote({
@@ -79,11 +79,11 @@ export const Quote = () => {
         </div>
       </div>
       <div
-        onClick={handleRefresh}
-        className="mt-4 p-2 rounded-full hover:bg-gray-200 cursor-pointer flex justify-center items-center"
+        className="mt-4 p-2 rounded-full flex justify-end items-center"
       >
         <RefreshIcon
-          className={`w-6 h-6 text-gray-600 ${loading ? "animate-spin" : ""}`}
+          onClick={handleRefresh}
+          className={`w-6 h-6 text-gray-600 cursor-pointer ${loading ? "animate-spin" : ""}`}
         />
       </div>
     </div>
