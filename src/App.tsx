@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { Search } from "./components/Search";
 import { Weather } from "./components/Weather";
-import { TodoList } from "./components/TodoList";
+import TodoList from "./components/TodoList";
 import { News } from "./components/News";
 import { Quote } from "./components/Quote";
 import { TopSites } from "./components/TopSites";

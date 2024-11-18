@@ -1,106 +1,231 @@
 import React, { useState, useEffect, FormEvent } from 'react';
-import { CheckCircle2, Circle, Plus, X, Trash2 } from 'lucide-react';
+import { CheckCircle2, Circle, Trash2 } from 'lucide-react';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
-export const TodoList = () => {
-  const [todos, setTodos] = useState<{ id: number; text: string; completed: boolean }[]>([]);
+interface TodoItem {
+  id: number;
+  text: string;
+  completed: boolean;
+  details?: string;
+  time?: string;
+  links?: string[];
+}
+
+const DetailModal = ({ todo, onClose, onSave }: {
+  todo: TodoItem;
+  onClose: () => void;
+  onSave: (updatedTodo: TodoItem) => void;
+}) => {
+  const [details, setDetails] = useState(todo.details || '');
+  const [time, setTime] = useState(todo.time || '');
+  const [links, setLinks] = useState<string[]>(todo.links || []);
+  const [newLink, setNewLink] = useState('');
+
+  const addLink = () => {
+    if (newLink.trim() && !links.includes(newLink)) {
+      setLinks([...links, newLink]);
+      setNewLink('');
+    }
+  };
+
+  const saveChanges = () => {
+    onSave({ ...todo, details, time, links });
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="modal-overlay absolute inset-0 bg-black bg-opacity-50" onClick={onClose}></div>
+      <div className="relative z-10 bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
+        <h3 className="text-lg font-semibold mb-4">Task Details</h3>
+        <div>
+          <label className="block text-sm font-medium mb-1">Details</label>
+          <textarea
+            value={details}
+            onChange={(e) => setDetails(e.target.value)}
+            className="w-full border rounded-lg px-3 py-2 mb-4"
+          />
+          <label className="block text-sm font-medium mb-1">Due Time</label>
+          <input
+            type="datetime-local"
+            value={time}
+            onChange={(e) => setTime(e.target.value)}
+            className="w-full border rounded-lg px-3 py-2 mb-4"
+          />
+          <label className="block text-sm font-medium mb-1">Links</label>
+          <div className="flex mb-4">
+            <input
+              type="url"
+              value={newLink}
+              onChange={(e) => setNewLink(e.target.value)}
+              placeholder="Add a link"
+              className="flex-grow border rounded-l-lg px-3 py-2"
+            />
+            <button
+              onClick={addLink}
+              className="bg-blue-500 text-white px-4 py-2 rounded-r-lg hover:bg-blue-600"
+            >
+              Add
+            </button>
+          </div>
+          <ul>
+            {links.map((link, index) => (
+              <li key={index} className="flex items-center mb-2">
+                <a href={link} target="_blank" rel="noopener noreferrer" className="text-blue-500 flex-grow truncate">{link}</a>
+                <button
+                  onClick={() => setLinks(links.filter((l) => l !== link))}
+                  className="text-red-500 ml-2"
+                >
+                  Remove
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="flex justify-end mt-4">
+          <button onClick={onClose} className="px-4 py-2 mr-2 bg-gray-300 rounded-lg">Cancel</button>
+          <button onClick={saveChanges} className="px-4 py-2 bg-blue-500 text-white rounded-lg">Save</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const SortableTodo = ({ todo, toggleTodo, removeTodo, setSelectedTodo }: {
+  todo: TodoItem;
+  toggleTodo: (id: number) => void;
+  removeTodo: (id: number) => void;
+  setSelectedTodo: (todo: TodoItem) => void;
+}) => {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: todo.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <li
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="flex items-center mb-2"
+    >
+      <button onClick={() => toggleTodo(todo.id)}>
+        {todo.completed ? <CheckCircle2 /> : <Circle />}
+      </button>
+      <span
+        className="flex-grow ml-4 cursor-pointer"
+        onClick={() => setSelectedTodo(todo)}
+      >
+        {todo.text}
+      </span>
+      <button onClick={() => removeTodo(todo.id)} className="ml-2 text-red-500"><Trash2 /></button>
+    </li>
+  );
+};
+
+const TodoList = () => {
+  const [todos, setTodos] = useState<TodoItem[]>([]);
   const [newTodo, setNewTodo] = useState('');
+  const [selectedTodo, setSelectedTodo] = useState<TodoItem | null>(null);
 
-  // Load todos from localStorage
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor)
+  );
+
   useEffect(() => {
     const savedTodos = JSON.parse(localStorage.getItem('todos') || '[]');
     setTodos(savedTodos);
   }, []);
 
-  // Save todos to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('todos', JSON.stringify(todos));
   }, [todos]);
 
   const addTodo = (e: FormEvent) => {
     e.preventDefault();
-    if (!newTodo.trim()) return;
-    setTodos([...todos, { id: Date.now(), text: newTodo, completed: false }]);
-    setNewTodo('');
+    if (newTodo.trim()) {
+      setTodos([...todos, { id: Date.now(), text: newTodo, completed: false }]);
+      setNewTodo('');
+    }
   };
 
   const toggleTodo = (id: number) => {
-    setTodos(todos.map(todo =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    ));
+    setTodos(todos.map(todo => todo.id === id ? { ...todo, completed: !todo.completed } : todo));
   };
 
   const removeTodo = (id: number) => {
     setTodos(todos.filter(todo => todo.id !== id));
   };
 
-  const clearAllTodos = () => {
-    setTodos([]);
+  const updateTodoDetails = (updatedTodo: TodoItem) => {
+    setTodos(todos.map(todo => todo.id === updatedTodo.id ? updatedTodo : todo));
+  };
+
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
+    if (active.id !== over.id) {
+      const oldIndex = todos.findIndex(todo => todo.id === active.id);
+      const newIndex = todos.findIndex(todo => todo.id === over.id);
+      setTodos(arrayMove(todos, oldIndex, newIndex));
+    }
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-white rounded-2xl p-6 shadow-xl w-full max-w-lg">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6">Tasks</h2>
-
-      {/* Add New Task */}
-      <form onSubmit={addTodo} className="flex gap-3 mb-6">
+    <div className="bg-white p-6 shadow-lg rounded-lg max-w-lg">
+      <h2 className="text-2xl mb-6">To-Do List</h2>
+      <form onSubmit={addTodo} className="flex mb-6">
         <input
           type="text"
           value={newTodo}
           onChange={(e) => setNewTodo(e.target.value)}
-          placeholder="Add a new task..."
-          className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm"
+          placeholder="Add a task"
+          className="flex-grow border px-3 py-2 rounded-l-lg"
         />
-        <button
-          type="submit"
-          className="px-4 py-3 rounded-lg bg-blue-500 text-white font-medium hover:bg-blue-600 transition"
-        >
-          <Plus className="w-5 h-5" />
-        </button>
+        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-r-lg">Add</button>
       </form>
-
-      {/* Task List */}
-      <ul className="space-y-4">
-        {todos.map(todo => (
-          <li
-            key={todo.id}
-            className={`flex items-center gap-3 p-3 rounded-lg shadow-md border ${
-              todo.completed ? 'bg-gray-100 border-gray-200' : 'bg-white border-blue-300'
-            } transition-all`}
-          >
-            <button
-              onClick={() => toggleTodo(todo.id)}
-              className={`text-gray-600 hover:text-blue-500 ${todo.completed ? 'text-green-500' : ''}`}
-            >
-              {todo.completed ? <CheckCircle2 className="w-6 h-6" /> : <Circle className="w-6 h-6" />}
-            </button>
-            <span className={`flex-1 text-lg font-medium ${todo.completed ? 'line-through text-gray-400' : 'text-gray-700'}`}>
-              {todo.text}
-            </span>
-            <button
-              onClick={() => removeTodo(todo.id)}
-              className="text-gray-400 hover:text-red-500 transition"
-              title="Remove task"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </li>
-        ))}
-        {!todos.length && (
-          <li className="text-center text-gray-500">No tasks yet. Add some!</li>
-        )}
-      </ul>
-
-      {/* Clear All Button */}
-      {todos.length > 0 && (
-        <div className="mt-6 text-right">
-          <button
-            onClick={clearAllTodos}
-            className="px-4 py-2 text-sm font-medium text-red-600 bg-red-100 hover:bg-red-200 rounded-lg transition"
-          >
-            <Trash2 className="inline-block w-4 h-4 mr-2" />
-            Clear All
-          </button>
-        </div>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext items={todos} strategy={verticalListSortingStrategy}>
+          <ul>
+            {todos.map(todo => (
+              <SortableTodo
+                key={todo.id}
+                todo={todo}
+                toggleTodo={toggleTodo}
+                removeTodo={removeTodo}
+                setSelectedTodo={setSelectedTodo}
+              />
+            ))}
+          </ul>
+        </SortableContext>
+      </DndContext>
+      {selectedTodo && (
+        <DetailModal
+          todo={selectedTodo}
+          onClose={() => setSelectedTodo(null)}
+          onSave={updateTodoDetails}
+        />
       )}
     </div>
   );
