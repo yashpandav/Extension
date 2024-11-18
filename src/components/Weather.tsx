@@ -4,11 +4,11 @@ import { Cloud, Sun, CloudRain } from 'lucide-react';
 export const Weather = () => {
   const [weather, setWeather] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
-
-  const API_KEY = 'c0f0869da45c570a16e74206592c8b58';
+  
+  const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 
   const fetchWeather = (latitude: number, longitude: number) => {
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`;
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}&units=metric`;
 
     fetch(url)
       .then((response) => {

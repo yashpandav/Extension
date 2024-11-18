@@ -14,11 +14,13 @@ export const Quote = () => {
 
     const category = "happiness";
     const apiUrl = `https://api.api-ninjas.com/v1/quotes?category=${category}`;
+    const QUOTES_API_KEY = import.meta.env.VITE_QUOTES_API_KEY;
 
     try {
       const response = await fetch(apiUrl, {
-        headers: { "X-Api-Key": "r9TZL8hPLhYDHhQAFAB0kw==o2Vtix87j03xvaAI" },
+        headers: { "X-Api-Key": QUOTES_API_KEY },
       });
+      
       const data = await response.json();
       if (response.ok && data.length > 0) {
         setQuote({
