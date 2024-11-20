@@ -9,13 +9,29 @@ import { TopSites } from "./components/TopSites";
 
 const getTimeBasedBackground = (): string => {
   const hour = new Date().getHours();
-  if (hour < 6)
-    return "https://images.unsplash.com/photo-1519681393784-d120267933ba";
-  if (hour < 12)
-    return "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8";
-  if (hour < 18)
-    return "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05";
-  return "https://images.unsplash.com/photo-1472120435266-53107fd0c44a";
+
+  if (hour < 6) {
+    // Night
+    return "https://images.unsplash.com/photo-1503264116251-35a269ce1283"; // Starry night
+  } else if (hour < 9) {
+    // Dawn
+    return "https://images.unsplash.com/photo-1533804283514-16183d6b7643"; // Sunrise over hills
+  } else if (hour < 12) {
+    // Morning
+    return "https://images.unsplash.com/photo-1531028658754-97dcf1b50a1b"; // Blue sky and clouds
+  } else if (hour < 15) {
+    // Early afternoon
+    return "https://images.unsplash.com/photo-1517180102446-f3ece451e9d8"; // Green fields
+  } else if (hour < 18) {
+    // Late afternoon
+    return "https://images.unsplash.com/photo-1484027834018-7e12a4b040da"; // Golden hour
+  } else if (hour < 21) {
+    // Evening
+    return "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0"; // City lights at dusk
+  } else {
+    // Night
+    return "https://images.unsplash.com/photo-1494783367193-149034c05e8f"; // Quiet nighttime scene
+  }
 };
 
 function App() {
