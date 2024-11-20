@@ -46,7 +46,7 @@ export const Quote = () => {
   };
 
   return (
-    <div className="bg-white rounded-xl p-4 shadow-lg max-w-md border border-gray-300">
+    <div className="bg-white rounded-xl h-auto p-4 shadow-lg max-w-md border border-gray-300">
       <div className="flex gap-3">
         <QuoteIcon className="w-8 h-8 text-gray-600 flex-shrink-0" />
         <div>
