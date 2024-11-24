@@ -7,7 +7,7 @@ import {
   History,
   X,
   ArrowRight,
-  Keyboard,
+  ChevronRight,
 } from "lucide-react";
 
 export const Search = () => {
@@ -26,10 +26,7 @@ export const Search = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        searchRef.current &&
-        !searchRef.current.contains(event.target as Node)
-      ) {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setShowSuggestions(false);
         setShowHistory(false);
         setSelectedIndex(-1);
@@ -86,21 +83,25 @@ export const Search = () => {
       text: "Search Google",
       icon: <SearchIcon className="w-4 h-4" />,
       type: "google",
+      color: "text-blue-500",
     },
     {
       text: "Ask ChatGPT",
       icon: <MessageSquare className="w-4 h-4" />,
       type: "chatgpt",
+      color: "text-green-500",
     },
     {
       text: "Search YouTube",
       icon: <Youtube className="w-4 h-4" />,
       type: "youtube",
+      color: "text-red-500",
     },
     {
       text: "Search News",
       icon: <Newspaper className="w-4 h-4" />,
       type: "news",
+      color: "text-purple-500",
     },
   ];
 
@@ -129,7 +130,13 @@ export const Search = () => {
           searchTypes.find((type) => type.text === selectedItem)?.type
         );
       } else {
-        handleSuggestionClick(selectedItem);
+        handleSearch(e as any, "google", selectedItem);
+      }
+    } else if (e.key === " " && selectedIndex !== -1) {
+      e.preventDefault();
+      const selectedItem = items[selectedIndex];
+      if (!searchTypes.some((type) => type.text === selectedItem)) {
+        handleSuggestionClick(selectedItem, true);
       }
     }
   };
@@ -169,15 +176,18 @@ export const Search = () => {
     setShowHistory(false);
   };
 
-  const handleSuggestionClick = (suggestion: string) => {
+  const handleSuggestionClick = (suggestion: string, onlyAddToSearchBar: boolean = false) => {
     setQuery(suggestion);
+    if (!onlyAddToSearchBar) {
+      handleSearch({ preventDefault: () => {} } as FormEvent, "google", suggestion);
+    }
     setShowSuggestions(false);
     setSelectedIndex(-1);
   };
 
   return (
     <div className="w-full max-w-2xl mx-auto relative z-50" ref={searchRef}>
-      <form onSubmit={(e) => handleSearch(e)} className="relative">
+      <form onSubmit={(e) => handleSearch(e)} className="relative group">
         <input
           ref={inputRef}
           type="text"
@@ -186,61 +196,54 @@ export const Search = () => {
           onFocus={() => {
             setShowHistory(false);
             setIsFocused(true);
+            setShowSuggestions(true);
           }}
           onBlur={() => setIsFocused(false)}
           onKeyDown={handleKeyDown}
           placeholder="Search the web..."
-          className={`
-                    ${isFocused ? "bg-white/95" : "bg-white/20"} 
-                    backdrop-blur-xl
-                    ${isFocused || query
-              ? "placeholder-gray-500"
-              : "placeholder-white/70"
-            }
-                    ${isFocused ? "text-gray-900" : "text-white/95"
-            }
-            ${
-              showSuggestions ? "rounded-t-2xl" : "rounded-xl"
-            }
-                    w-full py-4 pl-14 pr-32 
-                    text-lg
-                    focus:outline-none focus:ring-2 focus:ring-white/10 
-                    shadow-[0_8px_30px_rgb(0,0,0,0.12)]
-                    border border-white/10`}
+          className={` 
+              w-full py-4 pl-14 pr-32
+              text-lg
+              transition-[background-color, box-shadow, color, placeholder-color] duration-300 ease-in-out
+              ${isFocused ? "bg-white shadow-2xl" : "bg-white/20"}
+              ${isFocused || query ? "placeholder-gray-500" : "placeholder-gray-300"}
+              ${isFocused ? "text-gray-900" : "text-gray-300"}
+              ${showSuggestions || showHistory ? "rounded-t-2xl" : "rounded-2xl"}
+              focus:outline-none
+          `}
         />
+
         <SearchIcon
           className={`absolute left-5 top-1/2 transform -translate-y-1/2 
                     ${isFocused ? "text-gray-500" : "text-white/70"} 
                     w-6 h-6 transition-colors duration-200`}
         />
 
-        <div className="absolute right-5 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
-          {
-            query ? (
-              <button
-                type="button"
-                onClick={(e) => handleSearch(e)}
-                className={`p-2 rounded-lg transition-colors
-                     ${isFocused ? "text-gray-500" : "text-white/70"}
-                     hover:bg-gray-100 hover:text-slate-600
-                     `}
-
-              >
-                <ArrowRight className="w-5 h-5" />
-              </button>
-            ) : (<></>)
-          }
+        <div className="absolute right-5 top-1/2 transform -translate-y-1/2 flex items-center gap-3">
+          {query && (
+            <button
+              type="button"
+              onClick={(e) => handleSearch(e)}
+              className={`p-2 rounded-lg transition-colors
+                ${isFocused ? "text-gray-500" : "text-white/70"}
+                hover:bg-gray-100 hover:text-slate-600 active:scale-95
+              `}
+            >
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          )}
           <button
             type="button"
+            onMouseDown={(e) => e.preventDefault()}
             onClick={() => {
               setShowHistory(!showHistory);
               setShowSuggestions(false);
               setSelectedIndex(-1);
+              setIsFocused(true);
             }}
-            className={`p-2 rounded-lg transition-colors
-                     ${isFocused ? "text-gray-500" : "text-white/70"}
-                     hover:bg-gray-100 hover:text-slate-600
-                     `}
+            className={`p-2 rounded-lg transition-all duration-200
+              ${isFocused ? "text-gray-500" : "text-white/70"}
+              hover:bg-gray-100 hover:text-gray-600 active:scale-95`}
           >
             <History className="w-5 h-5" />
           </button>
@@ -248,89 +251,118 @@ export const Search = () => {
       </form>
 
       {/* Search Suggestions */}
-      {showSuggestions &&
-        (searchSuggestions.length > 0 || query.trim()) &&
-        !showHistory && (
-          <div
-            className="absolute w-full bg-white/95 
-                       rounded-b-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)]
-                       border border-white/10 
-                       overflow-hidden z-50"
-          >
-            {searchSuggestions.map((suggestion, index) => (
+      {showSuggestions && (searchSuggestions.length > 0 || query.trim()) && !showHistory && (
+        <div className="absolute w-full bg-white rounded-b-2xl shadow-2xl border-t border-gray-100 overflow-hidden z-50">
+          {searchSuggestions.map((suggestion, index) => (
+            <div
+              key={index}
+              className={`px-6 py-3 cursor-pointer transition-all duration-200 flex items-center justify-between
+                text-gray-800 group
+                ${selectedIndex === index ? "bg-gray-50 text-gray-900" : "hover:bg-gray-50 hover:text-gray-900"}`}
+            >
+              <div 
+                onClick={() => handleSuggestionClick(suggestion)}
+                className="flex items-center gap-3 flex-grow"
+              >
+                <SearchIcon
+                  className={`w-4 h-4 text-gray-400 transition-colors
+                    ${selectedIndex === index ? "text-blue-500" : "group-hover:text-blue-500"}`}
+                />
+                <span
+                  className={`transition-colors ${selectedIndex === index ? "text-blue-600" : "group-hover:text-blue-600"}`}
+                >
+                  {suggestion}
+                </span>
+              </div>
+              <button
+                onClick={() => handleSuggestionClick(suggestion, true)}
+                className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          ))}
+
+          {/* Search Type Options */}
+          <div className="border-t border-gray-100">
+            {searchTypes.map((type, index) => (
               <div
                 key={index}
-                onClick={() => handleSuggestionClick(suggestion)}
-                className={`px-6 py-3 cursor-pointer transition-colors flex items-center gap-3
-                         text-gray-800
-                         ${selectedIndex === index
-                    ? "bg-gray-100"
-                    : "hover:bg-gray-50"
+                onClick={(e) => handleSearch(e as any, type.type)}
+                className={`px-6 py-3 cursor-pointer transition-all duration-200 flex items-center gap-3
+                  text-gray-800 group
+                  ${selectedIndex === searchSuggestions.length + index
+                    ? "bg-gray-50 text-gray-900"
+                    : "hover:bg-gray-50 hover:text-gray-900"
                   }`}
               >
-                <SearchIcon className="w-4 h-4 text-gray-500" />
-                <span>{suggestion}</span>
-              </div>
-            ))}
-            {/* Search Type Options */}
-            <div className="border-t border-gray-200">
-              {searchTypes.map((type, index) => (
-                <div
-                  key={index}
-                  onClick={(e) => handleSearch(e as any, type.type)}
-                  className={`px-6 py-3 cursor-pointer transition-colors flex items-center gap-3
-                           text-gray-800
-                           ${selectedIndex === searchSuggestions.length + index
-                      ? "bg-gray-100"
-                      : "hover:bg-gray-50"
+                {React.cloneElement(type.icon, {
+                  className: `${type.color} transition-transform group-hover:scale-110`,
+                })}
+                <span
+                  className={`transition-colors ${selectedIndex === searchSuggestions.length + index
+                    ? "text-gray-900"
+                    : "group-hover:text-gray-900"
                     }`}
                 >
-                  {React.cloneElement(type.icon, {
-                    className: "text-gray-500",
-                  })}
-                  <span>{type.text}</span>
-                </div>
-              ))}
-            </div>
+                  {type.text}
+                </span>
+              </div>
+            ))}
           </div>
-        )}
+        </div>
+      )}
 
       {/* Search History */}
       {showHistory && (
-        <div
-          className="absolute w-full mt-2 bg-white/95 
-                       rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)]
-                       border border-white/10 
-                       overflow-hidden z-50"
-        >
-          <div
-            className="flex items-center justify-between px-4 py-2 
-                         border-b border-gray-200"
-          >
-            <span className="text-gray-500 text-sm">Recent Searches</span>
+        <div className="absolute w-full bg-white rounded-b-2xl shadow-2xl border border-gray-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="flex items-center justify-between px-6 py-3 border-b border-gray-100">
+            <span className="text-gray-500 text-sm font-medium">Recent Searches</span>
             <button
               onClick={clearHistory}
-              className="text-gray-400 hover:text-gray-600 text-sm 
-                         flex items-center gap-1"
+              className="text-gray-400 hover:text-red-500 text-sm flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-red-50 transition-colors"
             >
-              <X className="w-4 h-4" /> Clear
+              <X className="w-4 h-4" /> Clear All
             </button>
           </div>
-          {searchHistory.map((item, index) => (
-            <div
-              key={index}
-              onClick={() => {
-                setQuery(item);
-                setShowHistory(false);
-              }}
-              className="flex items-center gap-3 px-6 py-3 
-                          cursor-pointer transition-colors text-gray-800
-                          hover:bg-gray-50"
-            >
-              <History className="w-4 h-4 text-gray-500" />
-              <span>{item}</span>
+          {searchHistory.length === 0 ? (
+            <div className="px-6 py-8 text-center text-gray-500 text-sm">
+              No recent searches
             </div>
-          ))}
+          ) : (
+            searchHistory.map((item, index) => (
+              <div
+                key={index}
+                className="group flex items-center gap-3 px-6 py-3 cursor-pointer transition-colors text-gray-800 hover:bg-gray-50"
+              >
+                <div
+                  onClick={() => {
+                    setQuery(item);
+                    setShowHistory(false);
+                  }}
+                  className="flex-grow flex items-center gap-3 cursor-pointer"
+                >
+                  <History className="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                  <span className="group-hover:text-blue-600">{item}</span>
+                </div>
+                <button
+                  onClick={() => {
+                    const updatedHistory = searchHistory.filter(
+                      (historyItem, idx) => idx !== index
+                    );
+                    setSearchHistory(updatedHistory);
+                    localStorage.setItem(
+                      "searchHistory",
+                      JSON.stringify(updatedHistory)
+                    );
+                  }}
+                  className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 p-1 hover:bg-red-50 rounded-md transition-all"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ))
+          )}
         </div>
       )}
     </div>
