@@ -10,38 +10,27 @@ import { TopSites } from "./components/TopSites";
 const getTimeBasedBackground = (): string => {
   const hour = new Date().getHours();
 
-  if (hour < 6) {
-    // Night
-    return "https://images.unsplash.com/photo-1503264116251-35a269ce1283"; 
-  } else if (hour < 9) {
-    // Dawn
-    return "https://images.unsplash.com/photo-1533804283514-16183d6b7643";
-  } else if (hour < 12) {
-    // Morning
-    return "https://images.unsplash.com/photo-1531028658754-97dcf1b50a1b";
-  } else if (hour < 15) {
-    // Early afternoon
-    return "https://images.unsplash.com/photo-1517180102446-f3ece451e9d8";
-  } else if (hour < 18) {
-    // Late afternoon
-    return "https://images.unsplash.com/photo-1484027834018-7e12a4b040da";
-  } else if (hour < 21) {
-    // Evening
-    return "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0";
-  } else {
-    // Night
-    return "https://images.unsplash.com/photo-1494783367193-149034c05e8f";
-  }
+  if (hour < 6)
+    return "https://images.unsplash.com/photo-1519681393784-d120267933ba";
+  if (hour < 12)
+    return "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8";
+  if (hour < 18)
+    return "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05";
+  return "https://images.unsplash.com/photo-1472120435266-53107fd0c44a";
 };
-
 
 function App() {
   const [time, setTime] = useState<Date>(new Date());
+  const [is24HourFormat, setIs24HourFormat] = useState<boolean>(true);
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
+
+  const toggleTimeFormat = () => {
+    setIs24HourFormat((prev) => !prev);
+  };
 
   return (
     <div
@@ -54,8 +43,20 @@ function App() {
             {/* Search and Clock Section */}
             <div className="text-center space-y-6">
               <div>
-                <h1 className="text-7xl font-bold text-white mb-3 tracking-tight">
-                  {format(time, "HH:mm")}
+                <h1
+                  className="text-7xl font-bold text-white mb-3 tracking-tight cursor-pointer"
+                  onClick={toggleTimeFormat}
+                >
+                  {is24HourFormat ? (
+                    format(time, "HH:mm")
+                  ) : (
+                    <>
+                      {format(time, "hh:mm")}
+                      <span className="text-4xl font-light ml-2">
+                        {format(time, "a")}
+                      </span>
+                    </>
+                  )}
                 </h1>
                 <p className="text-2xl text-white/90 font-light">
                   {format(time, "EEEE, MMMM do, yyyy")}

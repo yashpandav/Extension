@@ -190,35 +190,46 @@ export const Search = () => {
           onBlur={() => setIsFocused(false)}
           onKeyDown={handleKeyDown}
           placeholder="Search the web..."
-          className={`w-full px-6 py-4 pl-14 pr-32 rounded-2xl 
-                    ${isFocused || query ? "bg-white/95" : "bg-white/20"} 
-                    backdrop-blur-xl 
-                    ${isFocused || query ? "text-gray-800" : "text-white"}
-                    ${
-                      isFocused || query
-                        ? "placeholder-gray-500"
-                        : "placeholder-white/70"
-                    }
+          className={`
+                    ${isFocused ? "bg-white/95" : "bg-white/20"} 
+                    backdrop-blur-xl
+                    ${isFocused || query
+              ? "placeholder-gray-500"
+              : "placeholder-white/70"
+            }
+                    ${isFocused ? "text-gray-900" : "text-white/95"
+            }
+            ${
+              showSuggestions ? "rounded-t-2xl" : "rounded-xl"
+            }
+                    w-full py-4 pl-14 pr-32 
                     text-lg
-                    focus:outline-none focus:ring-2 focus:ring-white/50 
+                    focus:outline-none focus:ring-2 focus:ring-white/10 
                     shadow-[0_8px_30px_rgb(0,0,0,0.12)]
                     border border-white/10`}
         />
         <SearchIcon
           className={`absolute left-5 top-1/2 transform -translate-y-1/2 
-                    ${isFocused || query ? "text-gray-500" : "text-white/70"} 
+                    ${isFocused ? "text-gray-500" : "text-white/70"} 
                     w-6 h-6 transition-colors duration-200`}
         />
 
         <div className="absolute right-5 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
-          <button
-            type="button"
-            onClick={(e) => handleSearch(e)}
-            className={`p-2 hover:bg-gray-200 rounded-lg transition-colors
-                     ${isFocused || query ? "text-gray-500" : "text-white/70"}`}
-          >
-            <ArrowRight className="w-5 h-5" />
-          </button>
+          {
+            query ? (
+              <button
+                type="button"
+                onClick={(e) => handleSearch(e)}
+                className={`p-2 rounded-lg transition-colors
+                     ${isFocused ? "text-gray-500" : "text-white/70"}
+                     hover:bg-gray-100 hover:text-slate-600
+                     `}
+
+              >
+                <ArrowRight className="w-5 h-5" />
+              </button>
+            ) : (<></>)
+          }
           <button
             type="button"
             onClick={() => {
@@ -226,8 +237,10 @@ export const Search = () => {
               setShowSuggestions(false);
               setSelectedIndex(-1);
             }}
-            className={`p-2 hover:bg-gray-200 rounded-lg transition-colors
-                     ${isFocused || query ? "text-gray-500" : "text-white/70"}`}
+            className={`p-2 rounded-lg transition-colors
+                     ${isFocused ? "text-gray-500" : "text-white/70"}
+                     hover:bg-gray-100 hover:text-slate-600
+                     `}
           >
             <History className="w-5 h-5" />
           </button>
@@ -239,8 +252,8 @@ export const Search = () => {
         (searchSuggestions.length > 0 || query.trim()) &&
         !showHistory && (
           <div
-            className="absolute w-full mt-2 bg-white/95 
-                       rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)]
+            className="absolute w-full bg-white/95 
+                       rounded-b-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)]
                        border border-white/10 
                        overflow-hidden z-50"
           >
@@ -250,11 +263,10 @@ export const Search = () => {
                 onClick={() => handleSuggestionClick(suggestion)}
                 className={`px-6 py-3 cursor-pointer transition-colors flex items-center gap-3
                          text-gray-800
-                         ${
-                           selectedIndex === index
-                             ? "bg-gray-100"
-                             : "hover:bg-gray-50"
-                         }`}
+                         ${selectedIndex === index
+                    ? "bg-gray-100"
+                    : "hover:bg-gray-50"
+                  }`}
               >
                 <SearchIcon className="w-4 h-4 text-gray-500" />
                 <span>{suggestion}</span>
@@ -268,11 +280,10 @@ export const Search = () => {
                   onClick={(e) => handleSearch(e as any, type.type)}
                   className={`px-6 py-3 cursor-pointer transition-colors flex items-center gap-3
                            text-gray-800
-                           ${
-                             selectedIndex === searchSuggestions.length + index
-                               ? "bg-gray-100"
-                               : "hover:bg-gray-50"
-                           }`}
+                           ${selectedIndex === searchSuggestions.length + index
+                      ? "bg-gray-100"
+                      : "hover:bg-gray-50"
+                    }`}
                 >
                   {React.cloneElement(type.icon, {
                     className: "text-gray-500",
