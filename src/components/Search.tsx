@@ -7,12 +7,13 @@ import {
   History,
   X,
   ArrowRight,
-  ChevronRight,
+  ArrowUpLeft,
 } from "lucide-react";
 
 export const Search = () => {
   const [query, setQuery] = useState<string>("");
   const [showHistory, setShowHistory] = useState<boolean>(false);
+  const [showAllHistory, setShowAllHistory] = useState<boolean>(false);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
@@ -23,6 +24,8 @@ export const Search = () => {
     const saved = localStorage.getItem("searchHistory");
     return saved ? JSON.parse(saved) : [];
   });
+
+  const MAX_VISIBLE_HISTORY = 6;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -150,7 +153,7 @@ export const Search = () => {
     const searchQuery = suggestion || query;
     if (!searchQuery.trim()) return;
 
-    const newHistory = [searchQuery, ...searchHistory.slice(0, 9)];
+    const newHistory = [searchQuery, ...searchHistory.slice(0, 19)];
     setSearchHistory(newHistory);
     localStorage.setItem("searchHistory", JSON.stringify(newHistory));
 
@@ -170,6 +173,7 @@ export const Search = () => {
     window.location.href = urls[type as keyof typeof urls];
   };
 
+
   const clearHistory = () => {
     setSearchHistory([]);
     localStorage.removeItem("searchHistory");
@@ -179,7 +183,7 @@ export const Search = () => {
   const handleSuggestionClick = (suggestion: string, onlyAddToSearchBar: boolean = false) => {
     setQuery(suggestion);
     if (!onlyAddToSearchBar) {
-      handleSearch({ preventDefault: () => {} } as FormEvent, "google", suggestion);
+      handleSearch({ preventDefault: () => { } } as FormEvent, "google", suggestion);
     }
     setShowSuggestions(false);
     setSelectedIndex(-1);
@@ -201,21 +205,23 @@ export const Search = () => {
           onBlur={() => setIsFocused(false)}
           onKeyDown={handleKeyDown}
           placeholder="Search the web..."
-          className={` 
+          className={`
               w-full py-4 pl-14 pr-32
               text-lg
               transition-[background-color, box-shadow, color, placeholder-color] duration-300 ease-in-out
-              ${isFocused ? "bg-white shadow-2xl" : "bg-white/20"}
-              ${isFocused || query ? "placeholder-gray-500" : "placeholder-gray-300"}
-              ${isFocused ? "text-gray-900" : "text-gray-300"}
-              ${showSuggestions || showHistory ? "rounded-t-2xl" : "rounded-2xl"}
-              focus:outline-none
-          `}
+              ${isFocused || showSuggestions || showHistory ? "bg-white shadow-2xl" : "bg-white/20"}
+              ${isFocused || query || showSuggestions || showHistory ? "placeholder-gray-500" : "placeholder-white/90"}
+              ${isFocused || showSuggestions || showHistory ? "text-gray-900" : "text-white/90"}
+              ${(showSuggestions && query.length > 0) || showHistory
+              ? "rounded-t-xl"
+              : "rounded-xl"}
+              focus:outline-none`
+          }
         />
 
         <SearchIcon
           className={`absolute left-5 top-1/2 transform -translate-y-1/2 
-                    ${isFocused ? "text-gray-500" : "text-white/70"} 
+                    ${isFocused || showSuggestions || showHistory ? "text-gray-500" : "text-white/70"} 
                     w-6 h-6 transition-colors duration-200`}
         />
 
@@ -225,7 +231,7 @@ export const Search = () => {
               type="button"
               onClick={(e) => handleSearch(e)}
               className={`p-2 rounded-lg transition-colors
-                ${isFocused ? "text-gray-500" : "text-white/70"}
+                ${isFocused || showSuggestions || showHistory ? "text-gray-500" : "text-white/70"}
                 hover:bg-gray-100 hover:text-slate-600 active:scale-95
               `}
             >
@@ -239,10 +245,10 @@ export const Search = () => {
               setShowHistory(!showHistory);
               setShowSuggestions(false);
               setSelectedIndex(-1);
-              setIsFocused(true);
+              setIsFocused(true)
             }}
             className={`p-2 rounded-lg transition-all duration-200
-              ${isFocused ? "text-gray-500" : "text-white/70"}
+              ${isFocused || showSuggestions || showHistory ? "text-gray-500" : "text-white/70"}
               hover:bg-gray-100 hover:text-gray-600 active:scale-95`}
           >
             <History className="w-5 h-5" />
@@ -260,7 +266,7 @@ export const Search = () => {
                 text-gray-800 group
                 ${selectedIndex === index ? "bg-gray-50 text-gray-900" : "hover:bg-gray-50 hover:text-gray-900"}`}
             >
-              <div 
+              <div
                 onClick={() => handleSuggestionClick(suggestion)}
                 className="flex items-center gap-3 flex-grow"
               >
@@ -278,7 +284,7 @@ export const Search = () => {
                 onClick={() => handleSuggestionClick(suggestion, true)}
                 className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
               >
-                <ChevronRight className="w-4 h-4" />
+                <ArrowUpLeft className="w-4 h-4" />
               </button>
             </div>
           ))}
@@ -315,12 +321,12 @@ export const Search = () => {
 
       {/* Search History */}
       {showHistory && (
-        <div className="absolute w-full bg-white rounded-b-2xl shadow-2xl border border-gray-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute w-full bg-white rounded-b-2xl shadow-2xl border-t border-gray-100 overflow-hidden z-50">
           <div className="flex items-center justify-between px-6 py-3 border-b border-gray-100">
             <span className="text-gray-500 text-sm font-medium">Recent Searches</span>
             <button
               onClick={clearHistory}
-              className="text-gray-400 hover:text-red-500 text-sm flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-red-50 transition-colors"
+              className="text-gray-400 hover:text-gray-500 text-sm flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-gray-50 transition-colors"
             >
               <X className="w-4 h-4" /> Clear All
             </button>
@@ -330,38 +336,60 @@ export const Search = () => {
               No recent searches
             </div>
           ) : (
-            searchHistory.map((item, index) => (
-              <div
-                key={index}
-                className="group flex items-center gap-3 px-6 py-3 cursor-pointer transition-colors text-gray-800 hover:bg-gray-50"
-              >
-                <div
-                  onClick={() => {
-                    setQuery(item);
-                    setShowHistory(false);
-                  }}
-                  className="flex-grow flex items-center gap-3 cursor-pointer"
-                >
-                  <History className="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors" />
-                  <span className="group-hover:text-blue-600">{item}</span>
-                </div>
+            <>
+              {searchHistory
+                .slice(0, showAllHistory ? searchHistory.length : MAX_VISIBLE_HISTORY)
+                .map((item, index) => (
+                  <div
+                    key={index}
+                    className={`px-6 py-3 cursor-pointer transition-all duration-200 flex items-center justify-between
+                text-gray-800 group
+                ${selectedIndex === index ? "bg-gray-50 text-gray-900" : "hover:bg-gray-50 hover:text-gray-900"}`}
+                  >
+                    <div
+                      onClick={(e) => {
+                        handleSearch(e as any);
+                        setQuery(item);
+                        setShowHistory(false);
+                      }}
+                      className="flex items-center gap-3 flex-grow"
+                    >
+                      <History
+                        className={`w-4 h-4 text-gray-400 transition-colors
+                    ${selectedIndex === index ? "text-blue-500" : "group-hover:text-blue-500"}`}
+                      />
+                      <span
+                        className={`transition-colors ${selectedIndex === index ? "text-blue-600" : "group-hover:text-blue-600"}`}
+                      >
+                        {item}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const updatedHistory = searchHistory.filter(
+                          (historyItem, idx) => idx !== index
+                        );
+                        setSearchHistory(updatedHistory);
+                        localStorage.setItem(
+                          "searchHistory",
+                          JSON.stringify(updatedHistory)
+                        );
+                      }}
+                      className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-500 transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              {searchHistory.length > MAX_VISIBLE_HISTORY && (
                 <button
-                  onClick={() => {
-                    const updatedHistory = searchHistory.filter(
-                      (historyItem, idx) => idx !== index
-                    );
-                    setSearchHistory(updatedHistory);
-                    localStorage.setItem(
-                      "searchHistory",
-                      JSON.stringify(updatedHistory)
-                    );
-                  }}
-                  className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 p-1 hover:bg-red-50 rounded-md transition-all"
+                  onClick={() => setShowAllHistory((prev) => !prev)}
+                  className="flex justify-end items-center ml-auto text-gray-500 hover:text-gray-700 py-3 pr-6 transition-colors"
                 >
-                  <X className="w-4 h-4" />
+                  {showAllHistory ? "Show Less" : "Show More History"}
                 </button>
-              </div>
-            ))
+              )}
+            </>
           )}
         </div>
       )}
