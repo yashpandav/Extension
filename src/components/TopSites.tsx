@@ -21,6 +21,19 @@ export const TopSites = () => {
         fetchTopSites();
     }, []);
 
+    useEffect(() => {
+        // Toggle body overflow to prevent scrolling
+        if (showAddModal) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
+        return () => {
+            document.body.style.overflow = ""; // Cleanup on unmount
+        };
+    }, [showAddModal]);
+
+
     const fetchTopSites = async () => {
         try {
             setLoading(true);
