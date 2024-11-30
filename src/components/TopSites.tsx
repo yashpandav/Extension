@@ -14,6 +14,8 @@ export const TopSites = () => {
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
     const [showAddModal, setShowAddModal] = useState(false);
     const [newSite, setNewSite] = useState({ title: "", url: "" });
+    const [isFocusedSiteName, siteNameFocused] = useState(false);
+    const [isFocusedSiteUrl, siteUrlFocused] = useState(false);
 
     useEffect(() => {
         fetchTopSites();
@@ -68,7 +70,7 @@ export const TopSites = () => {
     const getFaviconUrl = (url: string) => {
         try {
             const hostname = new URL(url).hostname;
-            return `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`;
+            return "https://www.google.com/s2/favicons?domain=${hostname}&sz=64";
         } catch {
             return "https://via.placeholder.com/32?text=?";
         }
@@ -79,6 +81,13 @@ export const TopSites = () => {
             return new URL(url).hostname.replace("www.", "");
         } catch {
             return url;
+        }
+    };
+
+    const handleBackdropClick = (e: React.MouseEvent) => {
+        if ((e.target as HTMLElement).id === "backdrop") {
+            setShowAddModal(false);
+            setNewSite({ title: "", url: "" });
         }
     };
 
@@ -188,58 +197,115 @@ export const TopSites = () => {
 
             {/* Add Shortcut Modal */}
             {showAddModal && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center z-50">
-                    <div className="bg-white rounded-lg mt-10 p-6 w-96 shadow-xl">
+                <div
+                    id="backdrop"
+                    className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-start justify-center z-50 transition-opacity duration-300"
+                    onClick={handleBackdropClick}
+                >
+                    <div
+                        className="bg-gray-900 text-gray-200 rounded-lg mt-10 p-6 w-96 shadow-2xl relative scale-95 transition-transform duration-300 ease-out hover:scale-100"
+                        onClick={(e) => e.stopPropagation()}
+                    >
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-semibold">Add New Shortcut</h3>
                             <button
                                 onClick={() => setShowAddModal(false)}
-                                className="text-gray-500 hover:text-gray-700"
+                                className="text-gray-400 hover:text-gray-100"
                             >
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
-                        <form onSubmit={handleSubmitNewSite} className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Site Title</label>
-                                <input
-                                    type="text"
-                                    value={newSite.title}
-                                    onChange={(e) => setNewSite({ ...newSite, title: e.target.value })}
-                                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                    required
-                                />
+                        <form onSubmit={handleSubmitNewSite} className="space-y-6">
+                            <div className="relative group">
+                                <label className="block text-sm font-medium text-gray-300 mb-2">
+                                    Site Title
+                                </label>
+                                <div className="relative">
+                                    {/* Animated Gradient Border Container */}
+                                    <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 
+                                    rounded-lg 
+                                    opacity-0 group-hover:opacity-100 
+                                    animate-border-gradient
+                                    transition-opacity duration-300">
+                                    </div>
+                                    {isFocusedSiteName && <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 
+                                    rounded-lg 
+                                    opacity-100 
+                                    animate-border-gradient
+                                    transition-opacity duration-300">
+                                    </div>}
+                                    <input
+                                        type="text"
+                                        value={newSite.title}
+                                        onFocus={() => siteNameFocused(true)}
+                                        onBlur={() => siteNameFocused(false)}
+                                        onChange={(e) => setNewSite({ ...newSite, title: e.target.value })}
+                                        className="relative w-full px-3 py-2 
+                                                bg-gray-800 text-white 
+                                                border border-transparent 
+                                                rounded-lg 
+                                                focus:outline-none 
+                                                z-10 
+                                                transition-all duration-300"
+                                        required
+                                    />
+                                </div>
                             </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Site URL</label>
-                                <input
-                                    type="url"
-                                    value={newSite.url}
-                                    onChange={(e) => setNewSite({ ...newSite, url: e.target.value })}
-                                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                    required
-                                />
+                            <div className="relative group">
+                                <label className="block text-sm font-medium text-gray-300 mb-2">
+                                    Site URL
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        type="url"
+                                        value={newSite.url}
+                                        onFocus={() => siteUrlFocused(true)}
+                                        onBlur={() => siteUrlFocused(false)}
+                                        onChange={(e) => setNewSite({ ...newSite, url: e.target.value })}
+                                        className="relative w-full px-3 py-2 
+                                        bg-gray-800 text-white 
+                                        border border-transparent 
+                                        rounded-lg 
+                                        focus:outline-none 
+                                        z-10 
+                                        transition-all duration-300"
+                                        required
+                                    />
+                                    {/* Animated Gradient Border Container */}
+                                    <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 
+                                    rounded-lg 
+                                    opacity-0 group-hover:opacity-100 
+                                    animate-border-gradient 
+                                    transition-opacity duration-300">
+                                    </div>
+                                    {isFocusedSiteUrl && <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 
+                                    rounded-lg 
+                                    opacity-100 
+                                    animate-border-gradient
+                                    transition-opacity duration-300">
+                                    </div>}
+                                </div>
                             </div>
                             <div className="flex justify-end gap-2 mt-4">
                                 <button
                                     type="button"
                                     onClick={() => setShowAddModal(false)}
-                                    className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                                    className="px-4 py-2 bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white rounded-lg transition-colors"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                                 >
                                     Add Shortcut
                                 </button>
                             </div>
                         </form>
                     </div>
-                </div>
+                </div >
             )}
-        </div>
+        </div >
     );
 };
 
