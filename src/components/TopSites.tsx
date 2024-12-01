@@ -21,19 +21,6 @@ export const TopSites = () => {
         fetchTopSites();
     }, []);
 
-    useEffect(() => {
-        // Toggle body overflow to prevent scrolling
-        if (showAddModal) {
-            document.body.style.overflow = "hidden";
-        } else {
-            document.body.style.overflow = "";
-        }
-        return () => {
-            document.body.style.overflow = ""; // Cleanup on unmount
-        };
-    }, [showAddModal]);
-
-
     const fetchTopSites = async () => {
         try {
             setLoading(true);
@@ -125,12 +112,12 @@ export const TopSites = () => {
     return (
         <div className="relative">
             {/* Decorative Elements */}
-            <div className="absolute -top-3 -right-3 w-16 h-16 bg-indigo-400/20 rounded-full blur-lg"></div>
-            <div className="absolute -bottom-3 -left-3 w-16 h-16 bg-blue-400/20 rounded-full blur-lg"></div>
-
-            {/* Main Card */}
             <div className="relative backdrop-blur-xl bg-white/10 rounded-2xl p-6 shadow-md border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-100/20 to-transparent"></div>
+
+                {/* Blur Effects */}
+                <div className="absolute -top-3 -right-3 w-16 h-16 bg-indigo-400/20 rounded-full blur-lg"></div>
+                <div className="absolute -bottom-3 -left-3 w-16 h-16 bg-blue-400/20 rounded-full blur-lg"></div>
+
                 <div className="relative space-y-6">
                     {/* Header */}
                     <div className="flex items-center justify-between">
@@ -140,7 +127,7 @@ export const TopSites = () => {
                         </div>
                         <button
                             onClick={handleAddShortcut}
-                            className="text-sm text-gray-700 hover:text-gray-900 transition-colors flex items-center gap-1 px-3 py-1 rounded-lg hover:bg-white/20"
+                            className="text-sm text-gray-300 hover:text-white transition-colors flex items-center gap-1 px-3 py-1 rounded-lg hover:bg-gray-800/20"
                         >
                             <Plus className="w-4 h-4" />
                             <span>Add Shortcut</span>
@@ -186,7 +173,7 @@ export const TopSites = () => {
                                             <span className="text-sm font-medium text-gray-900 truncate w-24 block">
                                                 {site.title}
                                             </span>
-                                            <span className="text-xs text-gray-700 truncate w-24 block">
+                                            <span className="text-xs text-gray-800 truncate w-24 block">
                                                 {getDomainName(site.url)}
                                             </span>
                                         </div>
