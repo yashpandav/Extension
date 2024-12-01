@@ -50,7 +50,8 @@ export const News: React.FC = () => {
 
       const data: NewsResponse = await response.json();
       if (data.articles?.length) {
-        setNews(data.articles);
+        const shuffledArticles = data.articles.sort(() => Math.random() - 0.5);
+        setNews(shuffledArticles.slice(0, 8));
       } else {
         throw new Error('No articles found');
       }

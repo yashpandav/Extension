@@ -122,7 +122,7 @@ export const TopSites = () => {
                     {/* Header */}
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <Compass className="w-5 h-5 text-gray-800" />
+                            <Compass className="w-5 h-5 text-gray-900" />
                             <h2 className="text-xl font-semibold text-gray-900">Quick Access</h2>
                         </div>
                         <button
