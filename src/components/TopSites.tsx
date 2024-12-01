@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Compass, ExternalLink, Plus, X, AlertTriangle } from "lucide-react";
+import { Compass, Plus, X, AlertCircle } from "lucide-react";
 
 interface Site {
     title: string;
@@ -91,19 +91,29 @@ export const TopSites = () => {
 
     if (error) {
         return (
-            <div className="relative">
-                <div className="relative backdrop-blur-xl bg-red-100 border border-red-300 rounded-2xl p-6 shadow-lg">
+            <div className="relative overflow-hidden">
+                <div className="absolute -top-3 -right-3 w-16 h-16 bg-red-400/20 rounded-full blur-lg"></div>
+                <div className="absolute -bottom-3 -left-3 w-16 h-16 bg-red-300/20 rounded-full blur-lg"></div>
+
+                <div className="relative backdrop-blur-xl bg-white/80 border border-red-200 rounded-2xl p-6 shadow-lg">
                     <div className="absolute inset-0 bg-gradient-to-br from-red-50/50 to-transparent rounded-2xl"></div>
-                    <div className="relative flex items-center gap-3">
-                        <AlertTriangle className="w-6 h-6 text-red-600" />
-                        <span className="font-semibold text-red-700">{error}</span>
+
+                    <div className="relative space-y-3">
+                        <div className="flex items-center gap-3 text-red-700">
+                            <AlertCircle className="w-5 h-5" />
+                            <span className="font-semibold">Sites Data Unavailable</span>
+                        </div>
+
+                        <p className="text-sm text-gray-800 pl-7">
+                            {error}
+                        </p>
+                        <button
+                            onClick={fetchTopSites}
+                            className="ml-7 mt-2 text-xs text-blue-700 hover:text-blue-800 transition-colors"
+                        >
+                            Try again
+                        </button>
                     </div>
-                    <button
-                        onClick={fetchTopSites}
-                        className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all"
-                    >
-                        Retry
-                    </button>
                 </div>
             </div>
         );

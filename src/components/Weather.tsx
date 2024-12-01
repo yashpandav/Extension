@@ -4,9 +4,9 @@ import { Cloud, Sun, CloudRain, AlertCircle, Clock } from 'lucide-react';
 export const Weather = () => {
   const [weather, setWeather] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
-  
+
   const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
-  
+
   const fetchWeather = (latitude: number, longitude: number) => {
     const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}&units=metric`;
 
@@ -56,20 +56,20 @@ export const Weather = () => {
         const { latitude, longitude } = position.coords;
         fetchWeather(latitude, longitude);
       },
-      () => setError('Unable to retrieve your location.')
+      () => setError('Please turn on location permission to retrieve your location.')
     );
   }, []);
-  
+
   if (error) {
     return (
       <div className="relative overflow-hidden">
         <div className="absolute -top-3 -right-3 w-16 h-16 bg-red-400/20 rounded-full blur-lg"></div>
         <div className="absolute -bottom-3 -left-3 w-16 h-16 bg-red-300/20 rounded-full blur-lg"></div>
-        
-        <div className="relative backdrop-blur-xl bg-white/90 border border-red-200 
+
+        <div className="relative backdrop-blur-xl bg-white/80 border border-red-200 
                       rounded-2xl p-4 shadow-lg">
           <div className="absolute inset-0 bg-gradient-to-br from-red-50/50 to-transparent rounded-2xl"></div>
-          
+
           <div className="relative space-y-2">
             <div className="flex items-center gap-2 text-red-700">
               {error.includes('timeout') ? (
@@ -79,12 +79,12 @@ export const Weather = () => {
               )}
               <span className="font-semibold">Weather Data Unavailable</span>
             </div>
-            
+
             <p className="text-sm text-gray-800 pl-7">
               {error}
             </p>
-            
-            <button 
+
+            <button
               onClick={() => window.location.reload()}
               className="ml-7 mt-2 text-xs text-blue-700 hover:text-blue-800 transition-colors"
             >
@@ -98,13 +98,13 @@ export const Weather = () => {
 
   if (!weather) {
     return (
-      <div className="relative backdrop-blur-lg bg-white/30 rounded-3xl p-6 shadow-lg border border-white/50">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-100/20 to-transparent rounded-3xl"></div>
-        <div className="relative flex items-center gap-3">
-          <div className="animate-pulse w-12 h-12 bg-white/50 rounded-full"></div>
+      <div className="relative backdrop-blur-xl bg-white/20 rounded-2xl p-6 shadow-md border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-100/20 to-transparent"></div>
+        <div className="relative animate-pulse flex items-center gap-3">
+          <div className="w-12 h-12 bg-white/50 rounded-full"></div>
           <div className="space-y-3">
-            <div className="animate-pulse w-24 h-6 bg-white/50 rounded-full"></div>
-            <div className="animate-pulse w-32 h-4 bg-white/50 rounded-full"></div>
+            <div className="w-24 h-6 bg-white/50 rounded-full"></div>
+            <div className="w-32 h-4 bg-white/50 rounded-full"></div>
           </div>
         </div>
       </div>
@@ -119,7 +119,7 @@ export const Weather = () => {
   const getWeatherIcon = () => {
     const condition = weather.condition.toLowerCase();
     const baseClasses = "w-12 h-12";
-    
+
     if (condition.includes('rain')) {
       return <CloudRain className={`${baseClasses} text-blue-600`} />;
     } else if (condition.includes('cloud')) {
@@ -127,46 +127,32 @@ export const Weather = () => {
     }
     return <Sun className={`${baseClasses} text-amber-400`} />;
   };
-
   return (
     <div
       className="group relative cursor-pointer"
       onClick={handleWeatherClick}
     >
-      <div className="absolute -top-3 -right-3 w-16 h-16 bg-blue-400/30 rounded-full blur-lg"></div>
-      <div className="absolute -bottom-3 -left-3 w-16 h-16 bg-purple-400/20 rounded-full blur-lg"></div>
-      
-      <div className="relative backdrop-blur-xl bg-white/10 rounded-2xl p-6 shadow-md 
-                    border border-white/30 overflow-hidden
-                    hover:shadow-lg hover:bg-white/15 transition-all duration-300">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-100/20 to-transparent"></div>
-        
+      <div className="absolute -top-3 -right-3 w-12 h-14 bg-indigo-400/20 rounded-full blur-lg"></div>
+      <div className="absolute -bottom-3 -left-3 w-12 h-14 bg-blue-400/20 rounded-full blur-lg"></div>
+
+      <div className="relative backdrop-blur-xl bg-white/10 rounded-2xl p-6 shadow-md border border-white/30 overflow-hidden hover:shadow-lg hover:bg-white/15 transition-all duration-300">
         <div className="relative flex items-start gap-4">
-          <div className="p-1">
-            {getWeatherIcon()}
-          </div>
-          
+          <div className="p-1">{getWeatherIcon()}</div>
+
           <div className="space-y-2">
             <div className="flex items-baseline gap-1">
-              <h2 className="text-3xl font-bold text-gray-900">
-                {weather.temp}°
-              </h2>
-              <span className="text-xl font-semibold text-gray-800">C</span>
+              <h2 className="text-3xl font-bold text-gray-900 drop-shadow-md">{weather.temp}°</h2>
+              <span className="text-xl font-semibold text-gray-800 drop-shadow-md">C</span>
             </div>
-            
+
             <div className="space-y-1">
-              <p className="text-base font-semibold text-gray-800">
-                {weather.location}
-              </p>
-              <p className="text-sm font-semibold text-slate-800 capitalize">
-                {weather.condition}
-              </p>
+              <p className="text-base font-semibold text-gray-900 drop-shadow-md">{weather.location}</p>
+              <p className="text-sm font-semibold text-slate-900 capitalize drop-shadow-md">{weather.condition}</p>
             </div>
           </div>
         </div>
 
-        <div className="absolute bottom-2 right-3 text-[10px] text-slate-800 opacity-0 
-                      group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute bottom-2 right-3 text-[10px] text-slate-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           View details →
         </div>
       </div>
