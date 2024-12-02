@@ -92,7 +92,7 @@ export const News: React.FC = () => {
           <div className="relative space-y-3">
             <div className="flex items-center gap-2 text-red-700">
               <AlertCircle className="w-6 h-6" />
-              <span className="font-semibold">Weather Data Unavailable</span>
+              <span className="font-semibold">News Data Unavailable</span>
             </div>
 
             <p className="text-sm text-gray-800 pl-7">
@@ -113,7 +113,7 @@ export const News: React.FC = () => {
   return (
     <div className="relative">
       {/* Main Card */}
-      <div className="relative backdrop-blur-xl bg-white/10 rounded-2xl p-6 shadow-md border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
+      <div className="relative backdrop-blur-xl bg-white/10 rounded-2xl p-6 shadow-md border border-white/30 overflow-hidden hover:shadow-lg transition-shadow duration-300">
 
         {/* Blur Effects */}
         <div className="absolute -top-3 -right-3 w-16 h-16 bg-indigo-400/20 rounded-full blur-lg"></div>

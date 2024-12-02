@@ -74,11 +74,14 @@ const SortableItem = ({
 
             {/* Task Text */}
             <div
-                className="flex-1 flex items-center cursor-pointer"
-                onClick={onEdit}
+                className={`flex-1 flex items-center ${todo.completed ? "cursor-default" : "cursor-pointer"}`} onClick={() => {
+                    if (!todo.completed) {
+                        onEdit();
+                    }
+                }}
             >
                 <span
-                    className={`text-lg font-semibold transition-all duration-200 ${todo.completed ? "line-through text-gray-500" : "text-gray-800"
+                    className={`text-lg font-semibold transition-all duration-200 ${todo.completed ? "line-through text-gray-500 cursor-default" : "text-gray-800 cursor-pointer"
                         }`}
                 >
                     {todo.text}

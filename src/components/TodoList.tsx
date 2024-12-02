@@ -110,19 +110,19 @@ const TodoList: React.FC = () => {
   return (
     <div className="relative">
 
-      <div className="relative backdrop-blur-xl bg-white/10 rounded-2xl p-6 shadow-md border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
+      <div className="relative backdrop-blur-xl bg-white/10 rounded-2xl p-6 pb-3 shadow-md border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
+
         <div className="absolute -top-3 -right-3 w-16 h-16 bg-indigo-400/20 rounded-full blur-lg"></div>
         <div className="absolute -bottom-3 -left-3 w-16 h-16 bg-blue-400/20 rounded-full blur-lg"></div>
 
         {/* Header Section */}
-
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-semibold text-white">
+          <h1 className="flex-1 text-3xl font-semibold text-white">
             My Tasks
           </h1>
 
           {/* Filter Buttons */}
-          <div className="flex space-x-4">
+          <div className="flex space-x-1">
             {['active', 'completed'].map((f) => (
               <button
                 key={f}
@@ -167,24 +167,38 @@ const TodoList: React.FC = () => {
             Add Task
           </button>
         </form>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext items={filteredTodos} strategy={verticalListSortingStrategy}>
+            {filteredTodos.map(todo => (
+              <SortableItem
+                key={todo.id}
+                todo={todo}
+                onToggle={() => toggleTodo(todo.id)}
+                onRemove={() => removeTodo(todo.id)}
+                onEdit={() => setEditingTodo(todo)}
+              />
+            ))}
+          </SortableContext>
+        </DndContext>
+
+        {
+          filter === 'completed' && todos.some(todo => todo.completed) && (
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={clearCompleted}
+                className="text-sm text-white hover:text-gray-200 flex items-center transition-colors duration-200"
+              >
+                <RefreshCcw className="mr-2 w-4 h-4" />
+                Clear All
+              </button>
+            </div>
+          )
+        }
       </div>
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext items={filteredTodos} strategy={verticalListSortingStrategy}>
-          {filteredTodos.map(todo => (
-            <SortableItem
-              key={todo.id}
-              todo={todo}
-              onToggle={() => toggleTodo(todo.id)}
-              onRemove={() => removeTodo(todo.id)}
-              onEdit={() => setEditingTodo(todo)}
-            />
-          ))}
-        </SortableContext>
-      </DndContext>
 
       {editingTodo && (
         <EditTodoDialog
@@ -194,19 +208,6 @@ const TodoList: React.FC = () => {
         />
       )}
 
-      {
-        filter === 'completed' && todos.some(todo => todo.completed) && (
-          <div className="mt-4 flex justify-end">
-            <button
-              onClick={clearCompleted}
-              className="text-sm text-red-500 hover:text-red-700 flex items-center"
-            >
-              <RefreshCcw className="mr-2 w-4 h-4" />
-              Clear All
-            </button>
-          </div>
-        )
-      }
     </div>
   );
 };
