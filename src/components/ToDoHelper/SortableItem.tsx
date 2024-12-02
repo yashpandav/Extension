@@ -46,12 +46,11 @@ const SortableItem = ({
         <li
             ref={setNodeRef}
             style={style}
-            className={`relative flex items-center p-4 mb-3 rounded-lg transition-all shadow-md ${todo.completed
-                ? "bg-gray-100 border-gray-200 text-gray-500"
-                : "bg-white border-blue-200"
+            className={`relative flex items-center p-4 mb-3 rounded-xl transition-all shadow-md hover:shadow-lg ${todo.completed
+                ? "bg-gradient-to-r from-gray-100 via-gray-200 to-gray-300 text-gray-500"
+                : "bg-gradient-to-r from-white via-blue-50 to-white border-blue-200 text-gray-800"
                 }`}
         >
-
             {/* Drag Handle */}
             <button
                 {...attributes}
@@ -63,7 +62,8 @@ const SortableItem = ({
             {/* Completion Toggle */}
             <button
                 onClick={onToggle}
-                className={`mr-1 p-2 rounded-full ${todo.completed ? "bg-green-100" : "hover:bg-green-100"}`}
+                className={`mr-2 p-2 rounded-full transition-all duration-200 ${todo.completed ? "bg-green-100" : "hover:bg-green-100"
+                    }`}
             >
                 {todo.completed ? (
                     <CheckCircle2 className="text-green-500" />
@@ -78,7 +78,8 @@ const SortableItem = ({
                 onClick={onEdit}
             >
                 <span
-                    className={`text-lg font-semibold ${todo.completed ? "line-through text-gray-500" : "text-gray-800"}`}
+                    className={`text-lg font-semibold transition-all duration-200 ${todo.completed ? "line-through text-gray-500" : "text-gray-800"
+                        }`}
                 >
                     {todo.text}
                 </span>
@@ -89,9 +90,9 @@ const SortableItem = ({
                 onClick={onRemove}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
-                className="text-gray-500 hover:text-gray-600 transition"
+                className="text-gray-400 hover:text-gray-600 transition-all duration-300"
             >
-                {isHovered ? <CircleX /> : <CircleMinus />}
+                {isHovered ? <CircleX className="text-red-500" /> : <CircleMinus />}
             </button>
         </li>
     );

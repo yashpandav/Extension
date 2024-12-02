@@ -108,93 +108,106 @@ const TodoList: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-800 rounded-xl shadow-lg p-6 w-full max-w-md">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-white">My Tasks</h1>
-        <div className="flex space-x-2">
-          {['active', 'completed'].map(f => (
-            <button
-              key={f}
-              onClick={() => setFilter(f as 'active' | 'completed')}
-              className={`text-sm px-3 py-1 rounded ${filter === f
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-700 text-gray-300'
-                }`}
-            >
-              {f.charAt(0).toUpperCase() + f.slice(1)}
-            </button>
-          ))}
-        </div>
-      </div>
+    <div className="relative">
 
-      <form onSubmit={addTodo} className="flex flex-col space-y-4 mb-6 shadow-md">
-        <div className="flex items-center justify-between">
-          <input
-            type="text"
-            value={newTodo}
-            onChange={(e) => setNewTodo(e.target.value)}
-            placeholder="Add a new task"
-            className="flex-1 bg-gray-800 text-white border border-gray-600 p-3 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
-          />
-          <select
-            className="bg-gray-800 text-white border-l-0 border border-gray-600 p-3 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onChange={(e) => setNewPriority(e.target.value as 'Low' | 'Medium' | 'High')}
-            value={newPriority}
-          >
-            {['Low', 'Medium', 'High'].map(level => (
-              <option key={level} value={level} className="bg-gray-800 text-white">
-                {level}
-              </option>
+      <div className="relative backdrop-blur-xl bg-white/10 rounded-2xl p-6 shadow-md border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
+        <div className="absolute -top-3 -right-3 w-16 h-16 bg-indigo-400/20 rounded-full blur-lg"></div>
+        <div className="absolute -bottom-3 -left-3 w-16 h-16 bg-blue-400/20 rounded-full blur-lg"></div>
+
+        {/* Header Section */}
+
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-semibold text-white">
+            My Tasks
+          </h1>
+
+          {/* Filter Buttons */}
+          <div className="flex space-x-4">
+            {['active', 'completed'].map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f as 'active' | 'completed')}
+                className={`text-sm font-semibold px-4 py-2 rounded-full shadow-md transition-all duration-300 ${filter === f
+                  ? 'bg-gradient-to-r from-gray-700 to-gray-900 text-white hover:from-gray-600 hover:to-gray-800'
+                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                  }`}
+              >
+                {f.charAt(0).toUpperCase() + f.slice(1)}
+              </button>
             ))}
-          </select>
-        </div>
-        <button
-          type="submit"
-          className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold px-5 py-3 rounded-lg shadow-md hover:from-blue-600 hover:to-purple-700 transition transform hover:-translate-y-0.5 active:scale-95"
-        >
-          Add Task
-        </button>
-      </form>
-
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext items={filteredTodos} strategy={verticalListSortingStrategy}>
-          {filteredTodos.map(todo => (
-            <SortableItem
-              key={todo.id}
-              todo={todo}
-              onToggle={() => toggleTodo(todo.id)}
-              onRemove={() => removeTodo(todo.id)}
-              onEdit={() => setEditingTodo(todo)}
-            />
-          ))}
-        </SortableContext>
-
-        {editingTodo && (
-          <EditTodoDialog
-            todo={editingTodo}
-            onSave={updateTodo}
-            onClose={() => setEditingTodo(null)}
-          />
-        )}
-      </DndContext>
-
-      {
-        filter === 'completed' && todos.some(todo => todo.completed) && (
-          <div className="mt-4 flex justify-end">
-            <button
-              onClick={clearCompleted}
-              className="text-sm text-red-500 hover:text-red-700 flex items-center"
-            >
-              <RefreshCcw className="mr-2 w-4 h-4" />
-              Clear All
-            </button>
           </div>
-        )
-      }
+        </div>
+
+        <form onSubmit={addTodo} className="flex flex-col space-y-4 mb-6 shadow-md">
+          <div className="flex items-center bg-gray-800/80 border border-gray-600 rounded-lg transition-all duration-300 hover:shadow-lg">
+            <input
+              type="text"
+              value={newTodo}
+              onChange={(e) => setNewTodo(e.target.value)}
+              placeholder="Add a new task"
+              className="flex-1 px-4 py-3 bg-transparent text-white placeholder-gray-400 rounded-l-lg focus:outline-none focus:ring-0"
+            />
+
+            <select
+              className="bg-gray-800 text-white border-l-0 border-gray-600 p-3 rounded-r-lg transition-colors duration-300 focus:outline-none"
+              value={newPriority}
+              onChange={(e) => setNewPriority(e.target.value as 'Low' | 'Medium' | 'High')}
+            >
+              {['Low', 'Medium', 'High'].map((level) => (
+                <option key={level} value={level} className="bg-gray-800 text-white">
+                  {level}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button
+            type="submit"
+            className="bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-semibold px-5 py-3 rounded-lg shadow-md hover:from-blue-500 hover:to-indigo-500 transition-all duration-200 focus:outline-none active:scale-95"
+          >
+            Add Task
+          </button>
+          </form>
+
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext items={filteredTodos} strategy={verticalListSortingStrategy}>
+            {filteredTodos.map(todo => (
+              <SortableItem
+                key={todo.id}
+                todo={todo}
+                onToggle={() => toggleTodo(todo.id)}
+                onRemove={() => removeTodo(todo.id)}
+                onEdit={() => setEditingTodo(todo)}
+              />
+            ))}
+          </SortableContext>
+
+          {editingTodo && (
+            <EditTodoDialog
+              todo={editingTodo}
+              onSave={updateTodo}
+              onClose={() => setEditingTodo(null)}
+            />
+          )}
+        </DndContext>
+
+        {
+          filter === 'completed' && todos.some(todo => todo.completed) && (
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={clearCompleted}
+                className="text-sm text-red-500 hover:text-red-700 flex items-center"
+              >
+                <RefreshCcw className="mr-2 w-4 h-4" />
+                Clear All
+              </button>
+            </div>
+          )
+        }
+      </div>
     </div>
   );
 };
