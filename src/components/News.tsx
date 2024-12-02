@@ -14,13 +14,19 @@ interface NewsResponse {
 
 const API_KEYS = [
   import.meta.env.VITE_NEWS_API_KEY_1,
-  import.meta.env.VITE_NEWS_API_KEY_2,
-  import.meta.env.VITE_NEWS_API_KEY_3,
-  import.meta.env.VITE_NEWS_API_KEY_4,
-  import.meta.env.VITE_NEWS_API_KEY_5,
-  import.meta.env.VITE_NEWS_API_KEY_6,
-  import.meta.env.VITE_NEWS_API_KEY_7,
-  import.meta.env.VITE_NEWS_API_KEY_8,
+  // import.meta.env.VITE_NEWS_API_KEY_2,
+  // import.meta.env.VITE_NEWS_API_KEY_3,
+  // import.meta.env.VITE_NEWS_API_KEY_4,
+  // import.meta.env.VITE_NEWS_API_KEY_5,
+  // import.meta.env.VITE_NEWS_API_KEY_6,
+  // import.meta.env.VITE_NEWS_API_KEY_7,
+  // import.meta.env.VITE_NEWS_API_KEY_8,
+  // import.meta.env.VITE_NEWS_API_KEY_9,
+  // import.meta.env.VITE_NEWS_API_KEY_10,
+  // import.meta.env.VITE_NEWS_API_KEY_11,
+  // import.meta.env.VITE_NEWS_API_KEY_12,
+  // import.meta.env.VITE_NEWS_API_KEY_13,
+  // import.meta.env.VITE_NEWS_API_KEY_14,
 ];
 
 export const News: React.FC = () => {

@@ -166,48 +166,47 @@ const TodoList: React.FC = () => {
           >
             Add Task
           </button>
-          </form>
-
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext items={filteredTodos} strategy={verticalListSortingStrategy}>
-            {filteredTodos.map(todo => (
-              <SortableItem
-                key={todo.id}
-                todo={todo}
-                onToggle={() => toggleTodo(todo.id)}
-                onRemove={() => removeTodo(todo.id)}
-                onEdit={() => setEditingTodo(todo)}
-              />
-            ))}
-          </SortableContext>
-
-          {editingTodo && (
-            <EditTodoDialog
-              todo={editingTodo}
-              onSave={updateTodo}
-              onClose={() => setEditingTodo(null)}
-            />
-          )}
-        </DndContext>
-
-        {
-          filter === 'completed' && todos.some(todo => todo.completed) && (
-            <div className="mt-4 flex justify-end">
-              <button
-                onClick={clearCompleted}
-                className="text-sm text-red-500 hover:text-red-700 flex items-center"
-              >
-                <RefreshCcw className="mr-2 w-4 h-4" />
-                Clear All
-              </button>
-            </div>
-          )
-        }
+        </form>
       </div>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext items={filteredTodos} strategy={verticalListSortingStrategy}>
+          {filteredTodos.map(todo => (
+            <SortableItem
+              key={todo.id}
+              todo={todo}
+              onToggle={() => toggleTodo(todo.id)}
+              onRemove={() => removeTodo(todo.id)}
+              onEdit={() => setEditingTodo(todo)}
+            />
+          ))}
+        </SortableContext>
+      </DndContext>
+
+      {editingTodo && (
+        <EditTodoDialog
+          todo={editingTodo}
+          onSave={updateTodo}
+          onClose={() => setEditingTodo(null)}
+        />
+      )}
+
+      {
+        filter === 'completed' && todos.some(todo => todo.completed) && (
+          <div className="mt-4 flex justify-end">
+            <button
+              onClick={clearCompleted}
+              className="text-sm text-red-500 hover:text-red-700 flex items-center"
+            >
+              <RefreshCcw className="mr-2 w-4 h-4" />
+              Clear All
+            </button>
+          </div>
+        )
+      }
     </div>
   );
 };
