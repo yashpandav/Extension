@@ -12,3 +12,13 @@ body {
   margin: 0;
   font-family: system-ui, -apple-system, sans-serif;
 }
+
+/* Hide scrollbar for all components with overflow-auto */
+.overflow-auto {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.overflow-auto::-webkit-scrollbar {
+  display: none; /* WebKit browsers */
+}

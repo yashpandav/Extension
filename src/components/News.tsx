@@ -14,19 +14,19 @@ interface NewsResponse {
 
 const API_KEYS = [
   import.meta.env.VITE_NEWS_API_KEY_1,
-  // import.meta.env.VITE_NEWS_API_KEY_2,
-  // import.meta.env.VITE_NEWS_API_KEY_3,
-  // import.meta.env.VITE_NEWS_API_KEY_4,
-  // import.meta.env.VITE_NEWS_API_KEY_5,
-  // import.meta.env.VITE_NEWS_API_KEY_6,
-  // import.meta.env.VITE_NEWS_API_KEY_7,
-  // import.meta.env.VITE_NEWS_API_KEY_8,
-  // import.meta.env.VITE_NEWS_API_KEY_9,
-  // import.meta.env.VITE_NEWS_API_KEY_10,
-  // import.meta.env.VITE_NEWS_API_KEY_11,
-  // import.meta.env.VITE_NEWS_API_KEY_12,
-  // import.meta.env.VITE_NEWS_API_KEY_13,
-  // import.meta.env.VITE_NEWS_API_KEY_14,
+  import.meta.env.VITE_NEWS_API_KEY_2,
+  import.meta.env.VITE_NEWS_API_KEY_3,
+  import.meta.env.VITE_NEWS_API_KEY_4,
+  import.meta.env.VITE_NEWS_API_KEY_5,
+  import.meta.env.VITE_NEWS_API_KEY_6,
+  import.meta.env.VITE_NEWS_API_KEY_7,
+  import.meta.env.VITE_NEWS_API_KEY_8,
+  import.meta.env.VITE_NEWS_API_KEY_9,
+  import.meta.env.VITE_NEWS_API_KEY_10,
+  import.meta.env.VITE_NEWS_API_KEY_11,
+  import.meta.env.VITE_NEWS_API_KEY_12,
+  import.meta.env.VITE_NEWS_API_KEY_13,
+  import.meta.env.VITE_NEWS_API_KEY_14,
 ];
 
 export const News: React.FC = () => {
@@ -123,18 +123,19 @@ export const News: React.FC = () => {
           {/* Header */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Newspaper className="w-5 h-5 text-gray-900" />
-              <h2 className="text-xl font-semibold text-gray-900">Latest News</h2>
+              <Newspaper className="w-5 h-5 text-white/80" />
+              <h2 className="text-xl font-semibold text-white/80">Latest News</h2>
             </div>
             <button
               onClick={handleRefresh}
-              className="text-sm text-gray-300 hover:text-white transition-colors flex items-center gap-1 px-3 py-1 rounded-lg hover:bg-gray-800/20"
+              className="text-sm text-white/70 hover:text-white flex items-center gap-1 px-3 py-1 rounded-lg hover:bg-gray-800/20 transition-colors"
               disabled={loading}
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               <span>Refresh</span>
             </button>
           </div>
+
 
           {/* Categories */}
           <div className="flex gap-2 flex-wrap">

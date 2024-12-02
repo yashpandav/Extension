@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Quote as QuoteIcon, RefreshCcw as RefreshIcon, AlertTriangle, AlertCircle } from "lucide-react";
+import { Quote as QuoteIcon, RefreshCcw as RefreshIcon, AlertCircle } from "lucide-react";
 
 export const Quote = () => {
   const [quote, setQuote] = useState<{ text: string; author: string } | null>(
@@ -44,6 +44,7 @@ export const Quote = () => {
   const handleRefresh = () => {
     fetchQuote();
   };
+
   if (error) {
     return (
       <div className="relative overflow-hidden">
@@ -76,40 +77,46 @@ export const Quote = () => {
     );
   }
 
-
   return (
-    <div className="bg-gradient-to-br from-white via-gray-100 to-gray-200 rounded-xl h-auto p-4 shadow-lg max-w-md border border-gray-300">
-      <div className="flex gap-3">
-        <QuoteIcon className="w-8 h-8 text-gray-600 flex-shrink-0" />
-        <div>
-          {loading ? (
-            <p className="text-lg font-medium text-gray-500">
-              {
-                [
-                  "Quote is on its way... 📜",
-                  "Just a moment, fetching your quote... ⏳",
-                  "Hold tight, wisdom incoming... 💭",
-                  "Searching for the perfect quote... 🔍",
-                  "One second, finding your inspiration... ✨",
-                ][Math.floor(Math.random() * 5)]
-              }
-            </p>
-          ) : (
-            <>
-              <p className="text-lg font-medium text-gray-800">{quote?.text}</p>
-              <p className="text-sm text-gray-600 mt-2">— {quote?.author}</p>
-            </>
-          )}
+    <div className="relative overflow-hidden">
+      {/* Decorative Blur Effects */}
+      <div className="absolute -top-3 -right-3 w-16 h-16 bg-indigo-400/20 rounded-full blur-lg"></div>
+      <div className="absolute -bottom-3 -left-3 w-16 h-16 bg-blue-400/20 rounded-full blur-lg"></div>
+
+      {/* Quote Container */}
+      <div className="relative backdrop-blur-xl bg-white/10 rounded-2xl p-6 shadow-md border border-white/30 overflow-hidden hover:shadow-lg transition-all duration-300">
+        <div className="flex gap-3">
+          <QuoteIcon className="w-8 h-8 text-white flex-shrink-0" />
+          <div>
+            {loading ? (
+              <p className="text-lg font-medium text-gray-300">
+                {
+                  [
+                    "Quote is on its way... 📜",
+                    "Just a moment, fetching your quote... ⏳",
+                    "Hold tight, wisdom incoming... 💭",
+                    "Searching for the perfect quote... 🔍",
+                    "One second, finding your inspiration... ✨",
+                  ][Math.floor(Math.random() * 5)]
+                }
+              </p>
+            ) : (
+              <>
+                <p className="text-lg font-medium text-white">{quote?.text}</p>
+                <p className="text-sm text-gray-300 mt-2">— {quote?.author}</p>
+              </>
+            )}
+          </div>
         </div>
-      </div >
-      <div
-        className="mt-4 p-2 rounded-full flex justify-end items-center"
-      >
-        <RefreshIcon
-          onClick={handleRefresh}
-          className={`w-6 h-6 text-gray-600 cursor-pointer ${loading ? "animate-spin" : ""} hover:text-gray-700 transition-colors`}
-        />
+        <div
+          className="mt-4 p-2 rounded-full flex justify-end items-center"
+        >
+          <RefreshIcon
+            onClick={handleRefresh}
+            className={`w-6 h-6 text-gray-300 cursor-pointer ${loading ? "animate-spin" : ""} hover:text-white transition-colors`}
+          />
+        </div>
       </div>
-    </div >
+    </div>
   );
 };

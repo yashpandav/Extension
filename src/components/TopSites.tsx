@@ -132,12 +132,12 @@ export const TopSites = () => {
                     {/* Header */}
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <Compass className="w-5 h-5 text-gray-900" />
-                            <h2 className="text-xl font-semibold text-gray-900">Quick Access</h2>
+                            <Compass className="w-5 h-5 text-white" />
+                            <h2 className="text-xl font-semibold text-white/80">Quick Access</h2>
                         </div>
                         <button
                             onClick={handleAddShortcut}
-                            className="text-sm text-gray-300 hover:text-white transition-colors flex items-center gap-1 px-3 py-1 rounded-lg hover:bg-gray-800/20"
+                            className="text-sm text-white/70 hover:text-white transition-colors flex items-center gap-1 px-3 py-1 rounded-lg hover:bg-gray-800/20"
                         >
                             <Plus className="w-4 h-4" />
                             <span>Add Shortcut</span>
@@ -164,13 +164,13 @@ export const TopSites = () => {
                                         href={site.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex flex-col items-center p-3 rounded-lg hover:bg-white/20 transition-all duration-200"
+                                        className="flex flex-col items-center p-3 rounded-lg hover:bg-white/10 transition-all duration-200"
                                     >
                                         <div className="relative">
-                                            <div className="w-12 h-12 mb-2 rounded-full bg-white/60 flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-200">
+                                            <div className="w-12 h-12 mb-2 rounded-full bg-white/20 flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-200">
                                                 <img
                                                     src={getFaviconUrl(site.url)}
-                                                    alt=""
+                                                    alt="Favicon"
                                                     className="w-6 h-6"
                                                     onError={(e) => {
                                                         const target = e.target as HTMLImageElement;
@@ -180,18 +180,20 @@ export const TopSites = () => {
                                             </div>
                                         </div>
                                         <div className="text-center space-y-1">
-                                            <span className="text-sm font-medium text-gray-900 truncate w-24 block">
+                                            <span className="text-sm font-medium text-white truncate w-24 block">
                                                 {site.title}
                                             </span>
-                                            <span className="text-xs text-gray-800 truncate w-24 block">
+                                            <span className="text-xs text-gray-300 truncate w-24 block">
                                                 {getDomainName(site.url)}
                                             </span>
                                         </div>
                                     </a>
                                     {site.isCustom && hoveredIndex === index && (
                                         <button
-                                            onClick={() => handleRemoveCustomSite(index - sites.filter((s) => !s.isCustom).length)}
-                                            className="absolute top-2 right-2 text-slate-950 hover:text-gray-950"
+                                            onClick={() =>
+                                                handleRemoveCustomSite(index - sites.filter((s) => !s.isCustom).length)
+                                            }
+                                            className="absolute top-2 right-2 text-gray-400 hover:text-white transition-colors"
                                             title="Remove"
                                         >
                                             <X className="w-4 h-4" />

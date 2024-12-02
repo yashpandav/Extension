@@ -141,18 +141,26 @@ export const Weather = () => {
 
           <div className="space-y-2">
             <div className="flex items-baseline gap-1">
-              <h2 className="text-3xl font-bold text-gray-900 drop-shadow-md">{weather.temp}°</h2>
-              <span className="text-xl font-semibold text-gray-800 drop-shadow-md">C</span>
+              <h2 className="text-3xl font-bold text-white drop-shadow-md">
+                {weather.temp}°
+              </h2>
+              <span className="text-xl font-semibold text-white/80 drop-shadow-md">
+                C
+              </span>
             </div>
 
             <div className="space-y-1">
-              <p className="text-base font-semibold text-gray-900 drop-shadow-md">{weather.location}</p>
-              <p className="text-sm font-semibold text-slate-900 capitalize drop-shadow-md">{weather.condition}</p>
+              <p className="text-base font-semibold text-white drop-shadow-md">
+                {weather.location}
+              </p>
+              <p className="text-sm font-semibold text-white/80 capitalize drop-shadow-md">
+                {weather.condition}
+              </p>
             </div>
           </div>
         </div>
 
-        <div className="absolute bottom-2 right-3 text-[10px] text-slate-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute bottom-2 right-3 text-[10px] text-white/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           View details →
         </div>
       </div>
