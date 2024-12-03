@@ -1,26 +1,21 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 
 const backgroundOptions = [
-    { id: "nature", url: "https://images.unsplash.com/photo-1519681393784-d120267933ba" },  // Nature image
-    { id: "city", url: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0" },    // City image
-    { id: "abstract", url: "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8" }, // Abstract image
-    { id: "minimal", url: "https://images.unsplash.com/photo-1518837695005-2083093ee35b" },  // Minimal image
-    { id: "mountain", url: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0" },  // Mountain image
-    { id: "forest", url: "https://images.unsplash.com/photo-1496265958982-09cd7002f72e" },   // Forest image
-    { id: "ocean", url: "https://images.unsplash.com/photo-1531164447027-92291d7d16a5" },    // Ocean image
-    { id: "desert", url: "https://images.unsplash.com/photo-1521747116042-c07a13410b27" },   // Desert image
-    { id: "skyline", url: "https://images.unsplash.com/photo-1501594907350-45fe557ae674" },  // Skyline image
-    { id: "beach", url: "https://images.unsplash.com/photo-1517189286-417cc738eb1d" },       // Beach image
-    { id: "snow", url: "https://images.unsplash.com/photo-1496850474522-1e3d9ab9b478" },      // Snow image
-    { id: "urban", url: "https://images.unsplash.com/photo-1483431344439-22d6790324ea" },    // Urban image
-    { id: "autumn", url: "https://images.unsplash.com/photo-1520501714569-d2068cd388e6" },   // Autumn image
-    { id: "countryside", url: "https://images.unsplash.com/photo-1568873600-d95ffb9a3e7b" }, // Countryside image
-    { id: "river", url: "https://images.unsplash.com/photo-1492567787665-d2577a79ecad" },    // River image
-    { id: "lake", url: "https://images.unsplash.com/photo-1554020912-4410eb0ab80b" },        // Lake image
-    { id: "forest_path", url: "https://images.unsplash.com/photo-1524174761801-041cd0e50331" }, // Forest Path image
-    { id: "night", url: "https://images.unsplash.com/photo-1454887911039-c5c3eb6a3e4f" },     // Night image
-    { id: "morning", url: "https://images.unsplash.com/photo-1464331183032-3e0bda46c7e4" },   // Morning image
-    { id: "custom", url: "" }  // Option for custom image upload
+    { id: "nature", url: "https://images.unsplash.com/photo-1519681393784-d120267933ba" },
+    { id: "abstract", url: "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8" },
+    { id: "minimal", url: "https://images.unsplash.com/photo-1518837695005-2083093ee35b" },
+    { id: "space", url: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa" },
+    { id: "beach", url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e" },
+    { id: "desert", url: "https://images.unsplash.com/photo-1501785888041-af3ef285b470" },
+    { id: "pattern", url: "https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b" },
+    { id: "retro", url: "https://images.unsplash.com/photo-1557682224-5b8590cd9ec5" },
+    { id: "tech", url: "https://images.unsplash.com/photo-1518770660439-4636190af475" },
+    { id: "blue_light", url: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d" },
+    { id: "coding_screen", url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c" },
+    { id: "cybersecurity", url: "https://images.unsplash.com/photo-1510511459019-5dda7724fd87" },
+    { id: "tech_workspace", url: "https://images.unsplash.com/photo-1517433456452-f9633a875f6f" },
+    { id: "iot_devices", url: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5" },
+    { id: "custom", url: "" },
 ];
 
 const colorOptions = [
@@ -60,98 +55,126 @@ export const CustomizeModel = ({
         setIsModalOpen(false);
     };
 
+    const handleCustomImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setSelectedBackground(reader.result as string);
+                setCustomBackgroundUrl(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     return (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center">
-            <div className="bg-white p-8 rounded-lg shadow-xl w-[700px] flex">
-
-                {/* Left Section with Text */}
-                <div className="w-1/3 flex flex-col items-start space-y-4">
-                    <button
-                        className={`text-lg font-semibold ${activeSection === "background" ? "text-blue-500" : "text-black"}`}
-                        onClick={() => setActiveSection("background")}
-                    >
-                        Background Image
-                    </button>
-                    <button
-                        className={`text-lg font-semibold ${activeSection === "color" ? "text-blue-500" : "text-black"}`}
-                        onClick={() => setActiveSection("color")}
-                    >
-                        Overlay Color
-                    </button>
-                </div>
-
-                {/* Right Section with Content */}
-                <div className="w-2/3">
-                    {activeSection === "background" && (
-                        <div>
-                            <label className="block font-medium mb-2">Background Image:</label>
-                            <div className="grid grid-cols-4 gap-2">
-                                {backgroundOptions.map((bg) => (
-                                    <div
-                                        key={bg.id}
-                                        className={`cursor-pointer rounded overflow-hidden ${selectedBackground === bg.url ? "ring-2 ring-blue-500" : ""
-                                            }`}
-                                        onClick={() => {
-                                            setSelectedBackground(bg.url);
-                                            setCustomBackgroundUrl("");
-                                        }}
-                                    >
-                                        {bg.id === "custom" ? (
-                                            <input
-                                                type="file"
-                                                className="h-20 w-full cursor-pointer"
-                                                onChange={(e) => {
-                                                    if (e.target.files?.[0]) {
-                                                        setSelectedBackground(
-                                                            URL.createObjectURL(e.target.files[0])
-                                                        );
-                                                        setCustomBackgroundUrl(
-                                                            URL.createObjectURL(e.target.files[0])
-                                                        );
-                                                    }
-                                                }}
-                                            />
-                                        ) : (
-                                            <img
-                                                src={bg.url}
-                                                alt={`Background ${bg.id}`}
-                                                className="w-full h-20 object-cover"
-                                            />
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
+        <div className="bg-black/80 flex items-center justify-center h-auto">
+            <div className="bg-white/90 p-8 rounded-2xl shadow-2xl w-[1000px] max-w-full">
+                <div className="flex space-x-8 relative">
+                    {/* Navigation Sidebar */}
+                    <div className="w-1/5 pr-6 border-r border-gray-200">
+                        <div className="space-y-4">
+                            <button
+                                className={`w-full text-left text-lg font-medium py-3 px-4 rounded-lg transition-all duration-300 ${activeSection === "background"
+                                    ? "bg-blue-100 text-blue-700"
+                                    : "hover:bg-gray-100"}`}
+                                onClick={() => setActiveSection("background")}
+                            >
+                                Background Image
+                            </button>
+                            <button
+                                className={`w-full text-left text-lg font-medium py-3 px-4 rounded-lg transition-all duration-300 ${activeSection === "color"
+                                    ? "bg-blue-100 text-blue-700"
+                                    : "hover:bg-gray-100"}`}
+                                onClick={() => setActiveSection("color")}
+                            >
+                                Overlay Color
+                            </button>
                         </div>
-                    )}
+                    </div>
 
-                    {activeSection === "color" && (
-                        <div>
-                            <label className="block font-medium mb-2">Overlay Color:</label>
-                            <div className="grid grid-cols-4 gap-2">
-                                {colorOptions.map((colorOption) => (
-                                    <div
-                                        key={colorOption.id}
-                                        className={`h-10 rounded cursor-pointer ${colorOption.className} ${selectedColor === colorOption.className ? "ring-2 ring-blue-500" : ""
-                                            }`}
-                                        onClick={() => setSelectedColor(colorOption.className)}
-                                        title={colorOption.label}
-                                    />
-                                ))}
+                    {/* Content Area */}
+                    <div className="w-auto h-auto pl-6">
+                        {activeSection === "background" && (
+                            <div>
+                                <h2 className="text-2xl font-semibold mb-6 text-gray-800">Choose Background</h2>
+                                <div className="grid grid-cols-5 gap-6">
+                                    {backgroundOptions.map((bg) => (
+                                        <div
+                                            key={bg.id}
+                                            className={`relative group rounded-xl shadow-md transition-all duration-300 ${selectedBackground === bg.url || (bg.id === 'custom' && customBackgroundUrl)
+                                                ? "ring-4 ring-blue-500 scale-105"
+                                                : "hover:scale-105"}`}
+                                        >
+                                            {bg.id === "custom" ? (
+                                                <div className="relative">
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                                                        onChange={handleCustomImageUpload}
+                                                    />
+                                                    <div className="h-max bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                                                        <div className="text-center">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-blue-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                            </svg>
+                                                            <p className="text-blue-800">Upload Custom Image</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <img
+                                                    src={bg.url}
+                                                    alt={`Background ${bg.id}`}
+                                                    className="w-max h-max"
+                                                    onClick={() => {
+                                                        setSelectedBackground(bg.url);
+                                                        setCustomBackgroundUrl("");
+                                                    }}
+                                                />
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
+                        )}
+
+                        {activeSection === "color" && (
+                            <div>
+                                <h2 className="text-2xl font-semibold mb-6 text-gray-800">Choose Overlay Color</h2>
+                                <div className="grid grid-cols-4 gap-6">
+                                    {colorOptions.map((colorOption) => (
+                                        <button
+                                            key={colorOption.id}
+                                            className={`w-full p-6 rounded-lg transition-all duration-300 ${selectedColor === colorOption.className
+                                                ? "border-4 border-blue-500"
+                                                : "hover:scale-105"}`}
+                                            style={{ backgroundColor: colorOption.className }}
+                                            onClick={() => setSelectedColor(colorOption.className)}
+                                        ></button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="mt-8 flex justify-between">
+                            <button
+                                className="bg-gray-300 px-6 py-2 rounded-lg text-gray-800 hover:bg-gray-400 transition duration-300"
+                                onClick={() => setIsModalOpen(false)}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="bg-blue-500 px-6 py-2 rounded-lg text-white hover:bg-blue-600 transition duration-300"
+                                onClick={handleSaveChanges}
+                            >
+                                Save Changes
+                            </button>
                         </div>
-                    )}
+                    </div>
                 </div>
-                {/* Save Changes Button */}
             </div>
-
-            <button
-                className="w-full bg-blue-500 text-white py-2 rounded font-medium hover:bg-blue-600 mt-4"
-                onClick={handleSaveChanges}
-            >
-                Save Changes
-            </button>
         </div>
     );
 };
-
-export default CustomizeModel;

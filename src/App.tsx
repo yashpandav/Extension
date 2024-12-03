@@ -6,7 +6,7 @@ import TodoList from "./components/TodoList";
 import { News } from "./components/News";
 import { Quote } from "./components/Quote";
 import { TopSites } from "./components/TopSites";
-import { CustomizeModel } from "./components/CustomizeModel";
+import {CustomizeModel} from "./components/CustomizeModel";
 import { PenLine } from "lucide-react";
 
 
@@ -41,56 +41,6 @@ function App() {
   }, []);
 
   const toggleTimeFormat = () => setIs24HourFormat((prev) => !prev);
-
-  const buttonRef = useRef<HTMLButtonElement>(null);
-
-  // Improved function to ensure button remains at the bottom right of the visible area
-  useEffect(() => {
-    const updateButtonPosition = () => {
-      if (buttonRef.current) {
-        // Get current scroll position
-        const scrollY = window.scrollY;
-        
-        // Get the height of the window
-        const windowHeight = window.innerHeight;
-        
-        // Get the height of the entire document
-        const documentHeight = document.documentElement.scrollHeight;
-        
-        // Get the height of the button
-        const buttonHeight = buttonRef.current.offsetHeight;
-        
-        // Calculate the bottom position
-        const bottomPosition = Math.max(
-          20, // Minimum distance from bottom
-          windowHeight - buttonHeight - 20 // Position at bottom of viewport with padding
-        );
-
-        // Apply positioning styles
-        buttonRef.current.style.position = 'fixed';
-        buttonRef.current.style.right = '24px'; // Consistent right margin
-        buttonRef.current.style.bottom = `${bottomPosition}px`;
-        
-        // Adjust z-index to ensure visibility
-        buttonRef.current.style.zIndex = '50';
-      }
-    };
-
-    // Attach the event listener for scroll and resize
-    window.addEventListener("scroll", updateButtonPosition);
-    window.addEventListener("resize", updateButtonPosition);
-
-    // Initial button position update
-    updateButtonPosition();
-
-    // Clean up the event listeners on component unmount
-    return () => {
-      window.removeEventListener("scroll", updateButtonPosition);
-      window.removeEventListener("resize", updateButtonPosition);
-    };
-  }, []);
-
-
 
   return (
     <div
@@ -145,8 +95,7 @@ function App() {
 
           {/* Customize Button */}
           <button
-            ref={buttonRef}
-            className="fixed right-6 bg-white p-4 rounded-full shadow-lg text-black"
+            className="fixed bottom-0 right-6 bg-white p-4 rounded-full shadow-lg text-black"
             onClick={() => setIsModalOpen(true)}
           >
             <PenLine />

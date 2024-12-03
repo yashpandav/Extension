@@ -26,7 +26,15 @@ const API_KEYS = [
   import.meta.env.VITE_NEWS_API_KEY_11,
   import.meta.env.VITE_NEWS_API_KEY_12,
   import.meta.env.VITE_NEWS_API_KEY_13,
-  import.meta.env.VITE_NEWS_API_KEY_14,
+  import.meta.env.VITE_NEWS_API_KEY_15,
+  import.meta.env.VITE_NEWS_API_KEY_16,
+  import.meta.env.VITE_NEWS_API_KEY_17,
+  import.meta.env.VITE_NEWS_API_KEY_18,
+  import.meta.env.VITE_NEWS_API_KEY_19,
+  import.meta.env.VITE_NEWS_API_KEY_20,
+  import.meta.env.VITE_NEWS_API_KEY_21,
+  import.meta.env.VITE_NEWS_API_KEY_22,
+  import.meta.env.VITE_NEWS_API_KEY_23,
 ];
 
 export const News: React.FC = () => {
